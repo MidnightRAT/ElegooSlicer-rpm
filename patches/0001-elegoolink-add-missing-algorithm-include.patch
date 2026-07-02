@@ -1,0 +1,22 @@
+From: ElegooSlicer Builder <builder@elegoo.com>
+Date: Wed, 2 Jul 2026 00:00:00 +0000
+Subject: [PATCH] elegoolink: add missing #include <algorithm>
+
+GCC 16 no longer implicitly includes <algorithm> through other headers.
+The elegoolink event_system.h uses std::find_if without including <algorithm>,
+causing compilation failure with:
+
+  error: 'find_if' is not a member of 'std'
+
+---
+ include/events/event_system.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+--- a/include/events/event_system.h
++++ b/include/events/event_system.h
+@@ -1,5 +1,6 @@
+ #pragma once
++#include <algorithm>
+ 
+ #include <functional>
+ #include <unordered_map>
