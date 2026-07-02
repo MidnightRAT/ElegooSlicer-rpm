@@ -62,7 +62,6 @@ jobs:
           VERSION=${{ steps.version.outputs.version }}
           rpmdev-setuptree
           cp elegoo-slicer-${VERSION}-src.tar.gz ~/rpmbuild/SOURCES/
-          cp patches/0001-elegoolink-add-missing-algorithm-include.patch ~/rpmbuild/SOURCES/
 
       - name: Update spec file with version
         run: |

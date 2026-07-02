@@ -1,12 +1,13 @@
 %global debug_package %{nil}
 
 Name:           elegoo-slicer
-Version:        @VERSION@
-Release:        @RELEASE@%{?dist}
+Version:        1.5.2.2
+Release:        2%{?dist}
 Summary:        Open-source slicer for FDM 3D printers
 License:        AGPL-3.0
 URL:            https://github.com/ELEGOO-3D/ElegooSlicer
 Source0:        %{name}-%{version}-src.tar.gz
+Patch0:         0001-elegoolink-add-missing-algorithm-include.patch
 
 # Runtime deps
 Requires:       gtk3
@@ -25,7 +26,7 @@ BuildRequires:  ninja-build
 BuildRequires:  gcc gcc-c++
 BuildRequires:  pkgconf
 BuildRequires:  autoconf automake libtool m4
-BuildRequires:  wget file
+BuildRequires:  git wget file
 BuildRequires:  perl-FindBin perl-IPC-Cmd
 BuildRequires:  libquadmath-devel
 BuildRequires:  nasm
@@ -50,7 +51,7 @@ ElegooSlicer is an open-source slicer compatible with most FDM printers.
 Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 
 %prep
-%setup -n ElegooSlicer-%{version}
+%autosetup -n ElegooSlicer-%{version} -p1
 
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
@@ -131,3 +132,11 @@ install -Dm644 LICENSE.txt %{buildroot}/usr/share/licenses/%{name}/LICENSE
 /usr/share/licenses/%{name}/LICENSE
 
 %changelog
+* Wed Jul 02 2026 ElegooSlicer Builder <builder@elegoo.com> - 1.5.2.2-2
+- Apply elegoolink patch for GCC 16 compatibility
+- Fixed wrapper script for brp-mangle-shebangs compatibility
+
+* Wed Jul 02 2026 ElegooSlicer Builder <builder@elegoo.com> - 1.5.2.2-1
+- Initial RPM package for ElegooSlicer v1.5.2.2
+- Self-contained build with bundled dependencies
+- Installed to /opt/ElegooSlicer
