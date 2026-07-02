@@ -39,7 +39,8 @@ jobs:
             libXcursor-devel libXcomposite-devel libXdamage-devel libXext-devel \
             libXtst-devel libXfixes-devel libXmu-devel \
             at-spi2-core-devel libepoxy-devel \
-            libspnav-devel libsecret-devel libmspack-devel
+            libspnav-devel libsecret-devel libmspack-devel \
+            texinfo
 
       - name: Get latest release version
         id: version
