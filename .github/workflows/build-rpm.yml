@@ -21,7 +21,25 @@ jobs:
       - name: Install build dependencies
         run: |
           dnf install -y \
-            rpm-build rpmdevtools wget file fuse-libs
+            rpm-build rpmdevtools git wget curl \
+            cmake ninja-build gcc gcc-c++ pkgconf \
+            autoconf automake libtool m4 \
+            perl-FindBin perl-IPC-Cmd \
+            libquadmath-devel nasm \
+            dbus-devel gtk3-devel webkit2gtk4.1-devel \
+            glew-devel glfw-devel mesa-libGLU-devel mesa-libGL-devel \
+            libjpeg-turbo-devel libpng-devel \
+            openssl-devel libcurl-devel \
+            freetype-devel fontconfig-devel pango-devel \
+            eigen3-devel cereal-devel \
+            extra-cmake-modules eglexternalplatform-devel \
+            gstreamer1-devel gstreamer1-plugins-base-devel gstreamermm-devel \
+            wayland-protocols-devel libxkbcommon-devel \
+            libX11-devel libXi-devel libXrandr-devel libXinerama-devel \
+            libXcursor-devel libXcomposite-devel libXdamage-devel libXext-devel \
+            libXtst-devel libXfixes-devel libXmu-devel \
+            at-spi2-core-devel libepoxy-devel \
+            libspnav-devel libsecret-devel libmspack-devel
 
       - name: Get latest release version
         id: version
@@ -31,28 +49,30 @@ jobs:
           echo "version=${LATEST}" >> $GITHUB_OUTPUT
           echo "Latest version: ${LATEST}"
 
-      - name: Download AppImage
+      - name: Download source tarball
         run: |
           VERSION=${{ steps.version.outputs.version }}
-          # Download AppImage from release
-          wget -q "https://github.com/ELEGOO-3D/ElegooSlicer/releases/download/v${VERSION}/ElegooSlicer_Linux_Ubuntu2404_V${VERSION}.AppImage" \
-            -O elegoo-slicer.AppImage
-          chmod +x elegoo-slicer.AppImage
+          # Download source tarball from release (with 'v' prefix)
+          wget -q "https://github.com/ELEGOO-3D/ElegooSlicer/archive/refs/tags/v${VERSION}.tar.gz" \
+            -O elegoo-slicer-${VERSION}-src.tar.gz
 
-      - name: Extract AppImage
+      - name: Extract and rename source directory
         run: |
-          # Extract AppImage contents
-          ./elegoo-slicer.AppImage --appimage-extract
-          # Rename extracted directory
-          mv squashfs-root elegoo-slicer-extracted
+          VERSION=${{ steps.version.outputs.version }}
+          # Extract tarball
+          tar xzf elegoo-slicer-${VERSION}-src.tar.gz
+          # GitHub extracts to ElegooSlicer-v{VERSION}, rename to match spec expectation
+          mv ElegooSlicer-v${VERSION} ElegooSlicer-${VERSION}
+          # Repack with correct directory name
+          tar czf elegoo-slicer-${VERSION}-src.tar.gz ElegooSlicer-${VERSION}/
+          rm -rf ElegooSlicer-${VERSION}
 
       - name: Prepare RPM build tree
         run: |
           VERSION=${{ steps.version.outputs.version }}
           rpmdev-setuptree
-
-          # Create source tarball from extracted AppImage
-          tar czf ~/rpmbuild/SOURCES/elegoo-slicer-${VERSION}.tar.gz elegoo-slicer-extracted/
+          cp elegoo-slicer-${VERSION}-src.tar.gz ~/rpmbuild/SOURCES/
+          cp patches/0001-elegoolink-add-missing-algorithm-include.patch ~/rpmbuild/SOURCES/
 
       - name: Update spec file with version
         run: |
