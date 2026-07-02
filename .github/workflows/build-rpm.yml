@@ -69,7 +69,7 @@ jobs:
           # Create spec file from template with correct version
           sed -e "s/@VERSION@/${VERSION}/g" \
               -e "s/@RELEASE@/1/g" \
-              elegoo-slicer-full.spec > ~/rpmbuild/SPECS/elegoo-slicer.spec
+              elegoo-slicer.spec > ~/rpmbuild/SPECS/elegoo-slicer.spec
 
       - name: Build RPM and SRPM
         run: |
