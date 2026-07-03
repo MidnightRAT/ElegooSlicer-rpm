@@ -40,7 +40,7 @@ jobs:
             libXtst-devel libXfixes-devel libXmu-devel \
             at-spi2-core-devel libepoxy-devel \
             libspnav-devel libsecret-devel libmspack-devel \
-            texinfo
+            texinfo chrpath
 
       - name: Get latest release version
         id: version
