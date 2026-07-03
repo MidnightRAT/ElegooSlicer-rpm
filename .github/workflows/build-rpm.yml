@@ -84,3 +84,14 @@ jobs:
             ~/rpmbuild/RPMS/x86_64/*.rpm
             ~/rpmbuild/SRPMS/*.rpm
           retention-days: 30
+
+      - name: Upload to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}
+          name: ElegooSlicer ${{ steps.version.outputs.version }}
+          files: |
+            ~/rpmbuild/RPMS/x86_64/*.rpm
+            ~/rpmbuild/SRPMS/*.rpm
+          fail_on_unmatched_files: true
+          make_latest: true
