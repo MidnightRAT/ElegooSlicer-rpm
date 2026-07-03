@@ -44,6 +44,7 @@ BuildRequires:  libXtst-devel libXfixes-devel libXmu-devel
 BuildRequires:  at-spi2-core-devel libepoxy-devel
 BuildRequires:  libspnav-devel libsecret-devel libmspack-devel
 BuildRequires:  texinfo
+BuildRequires:  chrpath
 
 %description
 ElegooSlicer is an open-source slicer compatible with most FDM printers.
@@ -88,6 +89,8 @@ mkdir -p %{buildroot}/opt/ElegooSlicer/resources
 # Install binary
 cp build/src/Release/elegoo-slicer %{buildroot}/opt/ElegooSlicer/bin/
 chmod 755 %{buildroot}/opt/ElegooSlicer/bin/elegoo-slicer
+# Fix RPATHs - remove build-time paths
+chrpath -d %{buildroot}/opt/ElegooSlicer/bin/elegoo-slicer 2>/dev/null || true
 
 # Install bundled shared libraries
 cp -f build/src/Release/libaosl.so %{buildroot}/opt/ElegooSlicer/bin/ 2>/dev/null || true
