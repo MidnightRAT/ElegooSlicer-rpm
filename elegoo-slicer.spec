@@ -25,7 +25,7 @@ BuildRequires:  ninja-build
 BuildRequires:  gcc gcc-c++
 BuildRequires:  pkgconf
 BuildRequires:  autoconf automake libtool m4
-BuildRequires:  wget file
+BuildRequires:  git wget file
 BuildRequires:  perl-FindBin perl-IPC-Cmd
 BuildRequires:  libquadmath-devel
 BuildRequires:  nasm
@@ -51,6 +51,9 @@ Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 
 %prep
 %setup -n ElegooSlicer-%{version}
+# Patch elegoolink cmake to add #include <algorithm> for GCC 16 compatibility
+sed -i 's|CMAKE_ARGS|PATCH_COMMAND sed -i "1a #include <algorithm>" "<SOURCE_DIR>/include/events/event_system.h" CMAKE_ARGS|' \
+  deps/elegoolink/elegoolink.cmake
 
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
