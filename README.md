@@ -2,6 +2,9 @@
 
 [![Build ElegooSlicer RPM](https://github.com/MidnightRAT/ElegooSlicer-rpm/actions/workflows/build-rpm.yml/badge.svg)](https://github.com/MidnightRAT/ElegooSlicer-rpm/actions/workflows/build-rpm.yml)
 [![Latest Release](https://img.shields.io/github/v/release/MidnightRAT/ElegooSlicer-rpm)](https://github.com/MidnightRAT/ElegooSlicer-rpm/releases/latest)
+
+## Donate
+
 [![Donate via WayForPay](https://img.shields.io/badge/Donate-WayForPay-blue?style=for-the-badge)](https://secure.wayforpay.com/donate/d29145e2b8e3c)
 
 RPM packaging for [ElegooSlicer](https://github.com/ELEGOO-3D/ElegooSlicer) — open-source slicer for FDM 3D printers.
