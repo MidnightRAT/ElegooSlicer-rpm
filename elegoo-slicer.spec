@@ -68,12 +68,16 @@ rm cloud_service_web.zip
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
 
+# Limit parallelism to avoid OOM on CI (GitHub Actions has ~7GB RAM)
+NPROC_DEPS=2
+NPROC_BUILD=2
+
 # Build dependencies
 mkdir -p deps/build
 cmake -S deps -B deps/build -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
   -DDEP_WX_GTK3=ON
-cmake --build deps/build -j$(nproc)
+cmake --build deps/build -j${NPROC_DEPS}
 
 # Build main app
 mkdir -p build
@@ -85,7 +89,7 @@ cmake -S . -B build -G "Ninja Multi-Config" \
   -DBBL_INTERNAL_TESTING=0 \
   -DELEGOO_INTERNAL_TESTING=0 \
   -DSLIC3R_PCH=OFF
-cmake --build build --config Release --target ElegooSlicer -j$(nproc)
+cmake --build build --config Release --target ElegooSlicer -j${NPROC_BUILD}
 
 # Generate localization
 ./scripts/run_gettext.sh || true

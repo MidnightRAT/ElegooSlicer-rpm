@@ -10,7 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 - GitHub Actions workflow for automated RPM builds
 - Automated upload of src.rpm and x86_64.rpm to GitHub Releases
 - CHANGELOG.md
-- README.md
+- README.md with CI/release badges and donate button
+
+### Changed
+- Limit build parallelism to 2 jobs to avoid OOM on CI
+
+### Removed
+- Unused files: result.json, elegoo-slicer-full.spec
 
 ### Fixed
 - RPATH issue: use chrpath to strip build-time paths from binary
