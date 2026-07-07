@@ -13,6 +13,10 @@ RPM packaging for [ElegooSlicer](https://github.com/ELEGOO-3D/ElegooSlicer) — 
 
 ElegooSlicer is an open-source slicer compatible with most FDM printers. Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 
+### File Associations
+
+The RPM package registers MIME types (`model/stl`, `model/obj`, `model/3mf`) so that double-clicking `.stl`, `.obj`, or `.3mf` files opens them in ElegooSlicer.
+
 ## Installation
 
 ### From GitHub Release

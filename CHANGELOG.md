@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-07-08
+
 ### Added
 - GitHub Actions workflow for automated RPM builds
 - Automated upload of src.rpm and x86_64.rpm to GitHub Releases
@@ -21,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 ### Fixed
 - RPATH issue: use chrpath to strip build-time paths from binary
 - GCC 16 compatibility: add `#include <algorithm>` patch for elegoolink
+- Fix MIME type for 3MF files: use registered `model/3mf` instead of non-standard `application/x-3mf`
 
 ## [1.0.0] - 2026-07-03
 
