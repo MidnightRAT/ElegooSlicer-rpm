@@ -7,7 +7,7 @@ RPM packaging for [ElegooSlicer](https://github.com/ELEGOO-3D/ElegooSlicer) — 
 
 ## Donate
 
-[![Donate via WayForPay](https://img.shields.io/badge/Donate-WayForPay-blue?style=for-the-badge)](https://secure.wayforpay.com/donate/d29145e2b8e3c)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20me%20on%20Ko--fi-ff5e5b?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/redeyesnightrat)
 
 ## What is ElegooSlicer?
 
