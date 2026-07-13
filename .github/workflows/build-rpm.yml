@@ -3,6 +3,10 @@ name: Build ElegooSlicer RPM
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'README.md'
+      - '.copr/**'
   workflow_dispatch:
   schedule:
     # Run weekly to check for new releases
@@ -24,7 +28,7 @@ jobs:
       - name: Install build dependencies
         run: |
           dnf install -y \
-            rpm-build rpmdevtools git wget curl \
+            rpm-build rpmdevtools git wget curl unzip \
             cmake ninja-build gcc gcc-c++ pkgconf \
             autoconf automake libtool m4 \
             perl-FindBin perl-IPC-Cmd \
@@ -59,6 +63,39 @@ jobs:
           # Download source tarball from release (with 'v' prefix)
           wget -q "https://github.com/ELEGOO-3D/ElegooSlicer/archive/refs/tags/v${VERSION}.tar.gz" \
             -O elegoo-slicer-${VERSION}-src.tar.gz
+
+      - name: Build dependencies and repackage
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          mkdir -p _src
+          tar xzf elegoo-slicer-${VERSION}-src.tar.gz -C _src
+          cd _src/ElegooSlicer-${VERSION}
+
+          # Apply GCC 16 patch
+          sed -i 's|CMAKE_ARGS|PATCH_COMMAND sed -i "1a #include <algorithm>" "<SOURCE_DIR>/include/events/event_system.h" CMAKE_ARGS|' \
+            deps/elegoolink/elegoolink.cmake
+
+          # Download web dependencies
+          mkdir -p resources/plugins/elegoolink/web
+          curl -sL "https://github.com/ELEGOO-3D/elegoo-fdm-web/releases/download/20260625/lan_service_web.zip" -o lan_service_web.zip
+          unzip -q lan_service_web.zip -d resources/plugins/elegoolink/web/lan_service_web
+          rm lan_service_web.zip
+          curl -sL "https://github.com/ELEGOO-3D/elegoo-fdm-web/releases/download/20260625/cloud_service_web.zip" -o cloud_service_web.zip
+          unzip -q cloud_service_web.zip -d resources/plugins/elegoolink/web/cloud_service_web
+          rm cloud_service_web.zip
+
+          # Build dependencies
+          export CMAKE_POLICY_VERSION_MINIMUM=3.5
+          mkdir -p deps/build
+          cmake -S deps -B deps/build -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DDEP_WX_GTK3=ON
+          cmake --build deps/build -j2
+
+          cd ../..
+          rm -f elegoo-slicer-${VERSION}-src.tar.gz
+          tar czf elegoo-slicer-${VERSION}-src.tar.gz -C _src ElegooSlicer-${VERSION}
+          rm -rf _src
 
       - name: Prepare RPM build tree
         run: |
