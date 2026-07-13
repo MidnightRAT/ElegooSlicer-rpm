@@ -25,7 +25,7 @@ BuildRequires:  ninja-build
 BuildRequires:  gcc gcc-c++
 BuildRequires:  pkgconf
 BuildRequires:  autoconf automake libtool m4
-BuildRequires:  git wget file
+BuildRequires:  git wget curl unzip file
 BuildRequires:  perl-FindBin perl-IPC-Cmd
 BuildRequires:  libquadmath-devel
 BuildRequires:  nasm
