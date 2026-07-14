@@ -10,12 +10,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 - COPR support: `.copr/Makefile` for automated SRPM builds on Fedora COPR
-- Pre-built dependencies in GitHub Actions workflow (repackage tarball with deps, web assets, and GCC 16 patch)
 - `curl` and `unzip` to BuildRequires for web dependency downloads in `%prep`
 - `paths-ignore: .copr/**` in GitHub Actions workflow to prevent infinite trigger loops
+- COPR installation instructions in README
 
 ### Changed
 - Spec file: skip dependency build if already pre-built (`if [ ! -d deps/build ]`)
+- Workflow: simplify by removing pre-built deps repackage step, let spec build deps from scratch
 
 ## [1.0.1] - 2026-07-08
 
