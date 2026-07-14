@@ -19,6 +19,13 @@ The RPM package registers MIME types (`model/stl`, `model/obj`, `model/3mf`) so 
 
 ## Installation
 
+### From COPR (Fedora, Recommended)
+
+```bash
+sudo dnf copr enable chirikrat/ElegooSlicer-rpm
+sudo dnf install elegoo-slicer
+```
+
 ### From GitHub Release
 
 Download the latest `elegoo-slicer-*.x86_64.rpm` from [Releases](https://github.com/MidnightRAT/ElegooSlicer-rpm/releases) and install:
@@ -58,11 +65,33 @@ rpmbuild -ba elegoo-slicer.spec
 
 ## CI/CD
 
-GitHub Actions automatically:
+### GitHub Actions
 
-1. Checks for new ElegooSlicer releases
-2. Builds src.rpm and x86_64.rpm
+Automatically:
+
+1. Checks for new ElegooSlicer releases (weekly schedule)
+2. Builds src.rpm and x86_64.rpm in Fedora 44 container
 3. Uploads artifacts to GitHub Releases
+
+### COPR
+
+Automatically builds for Fedora 43+ from the latest main branch:
+
+- [COPR Project Page](https://copr.fedorainfracloud.org/projects/chirikrat/ElegooSlicer-rpm/)
+
+**Note:** Workflows do not trigger on changes to CHANGELOG.md or README.md.
+
+## Project Structure
+
+```
+ElegooSlicer-rpm/
+├── .copr/Makefile         # COPR SRPM build script
+├── .github/workflows/     # GitHub Actions workflow
+├── elegoo-slicer.spec     # RPM spec file
+├── patches/               # Source patches
+├── CHANGELOG.md
+└── README.md
+```
 
 ## License
 
