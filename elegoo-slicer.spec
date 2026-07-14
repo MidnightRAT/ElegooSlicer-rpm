@@ -56,14 +56,18 @@ Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 sed -i 's|CMAKE_ARGS|PATCH_COMMAND sed -i "1a #include <algorithm>" "<SOURCE_DIR>/include/events/event_system.h" CMAKE_ARGS|' \
   deps/elegoolink/elegoolink.cmake
 
-# Download web dependencies (not included in source tarball)
+# Download web dependencies (skip if already included in tarball)
 mkdir -p resources/plugins/elegoolink/web
-curl -sL "https://github.com/ELEGOO-3D/elegoo-fdm-web/releases/download/20260625/lan_service_web.zip" -o lan_service_web.zip
-unzip -q lan_service_web.zip -d resources/plugins/elegoolink/web/lan_service_web
-rm lan_service_web.zip
-curl -sL "https://github.com/ELEGOO-3D/elegoo-fdm-web/releases/download/20260625/cloud_service_web.zip" -o cloud_service_web.zip
-unzip -q cloud_service_web.zip -d resources/plugins/elegoolink/web/cloud_service_web
-rm cloud_service_web.zip
+if [ ! -d resources/plugins/elegoolink/web/lan_service_web ]; then
+  curl -sL "https://github.com/ELEGOO-3D/elegoo-fdm-web/releases/download/20260625/lan_service_web.zip" -o lan_service_web.zip
+  unzip -oq lan_service_web.zip -d resources/plugins/elegoolink/web/lan_service_web
+  rm lan_service_web.zip
+fi
+if [ ! -d resources/plugins/elegoolink/web/cloud_service_web ]; then
+  curl -sL "https://github.com/ELEGOO-3D/elegoo-fdm-web/releases/download/20260625/cloud_service_web.zip" -o cloud_service_web.zip
+  unzip -oq cloud_service_web.zip -d resources/plugins/elegoolink/web/cloud_service_web
+  rm cloud_service_web.zip
+fi
 
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
