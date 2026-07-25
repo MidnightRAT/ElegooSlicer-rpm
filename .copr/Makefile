@@ -14,7 +14,7 @@ srpm:
 	echo "Latest version: $${VERSION}"; \
 	\
 	echo "=== Downloading source tarball ==="; \
-	wget -qL "https://github.com/ELEGOO-3D/ElegooSlicer/archive/refs/tags/v$${VERSION}.tar.gz" \
+	wget -q "https://github.com/elegoo-repo/ElegooSlicer/archive/refs/tags/v$${VERSION}.tar.gz" \
 	  -O "elegoo-slicer-$${VERSION}-src.tar.gz"; \
 	ls -lh "elegoo-slicer-$${VERSION}-src.tar.gz"; \
 	\
