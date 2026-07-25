@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-07-26
+
+### Changed
+- Workflow: add system -devel packages (tbb-devel, blosc-devel, NLopt-devel, opencv-devel, opencascade-devel, zlib-ng-compat-devel, expat-devel, openvdb-devel, mpfr-devel, CGAL-devel, openexr-devel)
+- Workflow: copy patches to SOURCES before building
+- COPR Makefile: copy patches to SOURCES before building
+- Bump RELEASE to 3 in both workflow and COPR Makefile
+
 ## [1.0.2] - 2026-07-14
 
 ### Added

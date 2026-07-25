@@ -57,7 +57,10 @@ sudo dnf install -y rpm-build rpmdevtools git wget curl \
   libXtst-devel libXfixes-devel libXmu-devel \
   at-spi2-core-devel libepoxy-devel \
   libspnav-devel libsecret-devel libmspack-devel \
-  texinfo chrpath
+  texinfo chrpath \
+  tbb-devel blosc-devel NLopt-devel opencv-devel \
+  opencascade-devel zlib-ng-compat-devel expat-devel \
+  openvdb-devel mpfr-devel CGAL-devel openexr-devel
 
 # Build RPM
 rpmbuild -ba elegoo-slicer.spec

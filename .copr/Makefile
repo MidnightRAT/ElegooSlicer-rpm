@@ -23,10 +23,18 @@ srpm:
 	mkdir -p "$$HOME/rpmbuild/SOURCES" "$$HOME/rpmbuild/SPECS"; \
 	cp "elegoo-slicer-$${VERSION}-src.tar.gz" "$$HOME/rpmbuild/SOURCES/"; \
 	\
+	echo "=== Copying patches ==="; \
+	for p in patches/000*.patch; do \
+	  if [ -f "$$p" ]; then \
+	    cp "$$p" "$$HOME/rpmbuild/SOURCES/"; \
+	    echo "  Copied: $$p"; \
+	  fi; \
+	done; \
+	\
 	echo "=== Generating spec file from template ==="; \
 	test -f elegoo-slicer.spec || { echo "ERROR: elegoo-slicer.spec not found in repo root"; exit 1; }; \
 	sed -e "s/@VERSION@/$${VERSION}/g" \
-	    -e "s/@RELEASE@/1/g" \
+	    -e "s/@RELEASE@/3/g" \
 	    elegoo-slicer.spec > "$$HOME/rpmbuild/SPECS/elegoo-slicer.spec"; \
 	\
 	echo "=== Building SRPM ==="; \
