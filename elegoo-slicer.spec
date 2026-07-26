@@ -72,6 +72,9 @@ fi
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
 
+# Fedora 44 GCC 16: -Wtemplate-body is new and errors on ambiguous 'detail' in bundled nlohmann JSON
+export CXXFLAGS="${CXXFLAGS} -Wno-error=template-body -Wno-error=overloaded-virtual"
+
 # Limit parallelism to avoid OOM on CI (GitHub Actions has ~7GB RAM)
 NPROC_DEPS=2
 NPROC_BUILD=2
