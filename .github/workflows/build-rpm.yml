@@ -50,8 +50,7 @@ jobs:
             texinfo chrpath \
             tbb-devel blosc-devel NLopt-devel opencv-devel \
             opencascade-devel zlib-ng-compat-devel expat-devel \
-            openvdb-devel mpfr-devel CGAL-devel openexr-devel \
-            nlohmann-json3-devel
+            openvdb-devel mpfr-devel CGAL-devel openexr-devel
 
       - name: Get latest release version
         id: version

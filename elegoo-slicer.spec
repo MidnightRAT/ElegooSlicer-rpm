@@ -45,7 +45,6 @@ BuildRequires:  at-spi2-core-devel libepoxy-devel
 BuildRequires:  libspnav-devel libsecret-devel libmspack-devel
 BuildRequires:  texinfo
 BuildRequires:  chrpath
-BuildRequires:  nlohmann-json3-devel
 
 %description
 ElegooSlicer is an open-source slicer compatible with most FDM printers.
@@ -72,6 +71,10 @@ fi
 
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
+
+# Fedora 44 GCC 16: suppress -Wtemplate-body and -Woverloaded-virtual errors
+# in bundled nlohmann JSON and ElegooSlicer code
+export CXXFLAGS="${CXXFLAGS} -Wno-error=template-body -Wno-error=overloaded-virtual"
 
 # Limit parallelism to avoid OOM on CI (GitHub Actions has ~7GB RAM)
 NPROC_DEPS=2
