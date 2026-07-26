@@ -6,6 +6,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.5] - 2026-07-26
+
+### Fixed
+- Fix nlohmann-json conflict: remove system nlohmann headers in `%prep` to
+  avoid ambiguity with the bundled version on GCC 16 (Fedora 44)
+
+### Changed
+- Bump RELEASE to 5
+
 ## [1.0.4] - 2026-07-26
 
 ### Changed

@@ -64,6 +64,10 @@ Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 
 %prep
 %setup -n ElegooSlicer-%{version}
+
+# Remove system nlohmann-json (pulled by opencv-devel) to avoid ambiguity
+# with the bundled version in deps_src/nlohmann/ on GCC 16
+rm -rf /usr/include/nlohmann
 # Patch elegoolink cmake to add #include <algorithm> for GCC 16 compatibility
 sed -i 's|CMAKE_ARGS|PATCH_COMMAND sed -i "1a #include <algorithm>" "<SOURCE_DIR>/include/events/event_system.h" CMAKE_ARGS|' \
   deps/elegoolink/elegoolink.cmake
