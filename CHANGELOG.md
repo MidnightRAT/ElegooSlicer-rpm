@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-07-27
+
+### Fixed
+- Fix OpenVDB find module: use Imath instead of IlmBase for Half (OpenEXR 3.x)
+- Fix OpenVDB find module: remove redundant CONFIG-mode Blosc find
+- Make sentry optional (no system package on Fedora)
+- Fix cmake 4 compatibility: CMAKE_POLICY_VERSION_MINIMUM for deps sub-builds
+- Fix cmake 4 compatibility: patch wxWidgets and elegoolink cmake_minimum_required
+- Fix missing `#include <algorithm>` in elegoolink for GCC 16
+- Remove nlohmann from deps_src/CMakeLists.txt to fix missing subdirectory error
+- Use SLIC3R_STATIC_EXCLUDE_GLEW to avoid libGLEW.a requirement
+- Set NPROC to 8 for faster builds
+
+### Changed
+- Bump RELEASE to 6
+
 ## [1.0.5] - 2026-07-26
 
 ### Fixed
