@@ -58,6 +58,7 @@ sudo dnf install -y rpm-build rpmdevtools git wget curl \
   at-spi2-core-devel libepoxy-devel \
   libspnav-devel libsecret-devel libmspack-devel \
   texinfo chrpath \
+  nlohmann-json3-devel \
   tbb-devel blosc-devel NLopt-devel opencv-devel \
   opencascade-devel zlib-ng-compat-devel expat-devel \
   openvdb-devel mpfr-devel CGAL-devel openexr-devel
