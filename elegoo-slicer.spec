@@ -71,6 +71,8 @@ fi
 
 %build
 export CMAKE_POLICY_VERSION_MINIMUM=3.5
+# Fedora 44 GCC treats -Woverloaded-virtual as error; suppress for ElegooSlicer
+export CXXFLAGS="${CXXFLAGS} -Wno-error=overloaded-virtual"
 
 # Limit parallelism to avoid OOM on CI (GitHub Actions has ~7GB RAM)
 NPROC_DEPS=2
