@@ -45,6 +45,18 @@ BuildRequires:  at-spi2-core-devel libepoxy-devel
 BuildRequires:  libspnav-devel libsecret-devel libmspack-devel
 BuildRequires:  texinfo
 BuildRequires:  chrpath
+# System lib deps (USE_SYSTEM_LIBS)
+BuildRequires:  tbb-devel
+BuildRequires:  blosc-devel
+BuildRequires:  NLopt-devel
+BuildRequires:  opencv-devel
+BuildRequires:  opencascade-devel
+BuildRequires:  zlib-ng-compat-devel
+BuildRequires:  expat-devel
+BuildRequires:  openvdb-devel
+BuildRequires:  mpfr-devel
+BuildRequires:  CGAL-devel
+BuildRequires:  openexr-devel
 
 %description
 ElegooSlicer is an open-source slicer compatible with most FDM printers.
@@ -86,7 +98,8 @@ if [ ! -d deps/build ]; then
   mkdir -p deps/build
   cmake -S deps -B deps/build -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
-    -DDEP_WX_GTK3=ON
+    -DDEP_WX_GTK3=ON \
+    -DUSE_SYSTEM_LIBS=ON
   cmake --build deps/build -j${NPROC_DEPS}
 else
   echo "=== Dependencies already built, skipping ==="

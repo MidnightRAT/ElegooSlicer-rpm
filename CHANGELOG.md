@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.4] - 2026-07-26
+
+### Changed
+- Spec: use system libs (`USE_SYSTEM_LIBS=ON`) instead of building bundled deps from source
+- Spec: add system -devel packages to `BuildRequires` for USE_SYSTEM_LIBS
+- Bump RELEASE to 4
+
 ## [1.0.3] - 2026-07-26
 
 ### Changed
