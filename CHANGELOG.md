@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.7] - 2026-07-27
+
+### Changed
+- Replace inline spec patches with proper patch files from working build
+- Add `0002-use-system-libs.patch`: proper USE_SYSTEM_LIBS cmake patch for deps
+- Add `imath-devel` to BuildRequires (OpenEXR 3.x compatibility)
+- Bump RELEASE to 7
+
 ## [1.0.6] - 2026-07-27
 
 ### Fixed

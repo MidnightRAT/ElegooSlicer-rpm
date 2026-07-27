@@ -7,6 +7,9 @@ Summary:        Open-source slicer for FDM 3D printers
 License:        AGPL-3.0
 URL:            https://github.com/ELEGOO-3D/ElegooSlicer
 Source0:        %{name}-%{version}-src.tar.gz
+# Use system -devel packages instead of bundled deps (TBB, Blosc, NLopt,
+# Cereal, GLEW, GMP, MPFR, zlib, png, expat, curl, jpeg, freetype, openssl)
+Patch2:         0002-use-system-libs.patch
 
 # Runtime deps
 Requires:       gtk3
@@ -64,6 +67,9 @@ Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 
 %prep
 %setup -n ElegooSlicer-%{version}
+
+# System-libs support (ported from OrcaSlicer USE_SYSTEM_LIBS approach)
+%patch -P2 -p1
 
 # Remove bundled nlohmann (conflicts with system nlohmann from opencv-devel on GCC 16)
 rm -rf deps_src/nlohmann
@@ -218,6 +224,15 @@ export CXXFLAGS="${CXXFLAGS} -Wno-error=template-body -Wno-error=overloaded-virt
 NPROC_DEPS=8
 NPROC_BUILD=8
 
+# Optionally restore pre-built dependencies from a local cache (skips ~1.5h rebuild)
+DEPS_CACHE="${DEPS_CACHE:-}"
+if [ ! -d deps/build ] && [ -n "$DEPS_CACHE" ] && [ -d "$DEPS_CACHE" ]; then
+  echo "=== Restoring dependencies from cache: $DEPS_CACHE ==="
+  mkdir -p deps
+  cp -a "$DEPS_CACHE" deps/build
+  echo "=== Cache restored ==="
+fi
+
 # Build dependencies (skip if already pre-built in SRPM)
 if [ ! -d deps/build ]; then
   echo "=== Building dependencies ==="
@@ -225,6 +240,7 @@ if [ ! -d deps/build ]; then
   cmake -S deps -B deps/build -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DDEP_WX_GTK3=ON \
+    -DUSE_SYSTEM_LIBS=ON \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   cmake --build deps/build -j${NPROC_DEPS}
 else
