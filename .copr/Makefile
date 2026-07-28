@@ -24,7 +24,7 @@ srpm:
 	cp "elegoo-slicer-$${VERSION}-src.tar.gz" "$$HOME/rpmbuild/SOURCES/"; \
 	\
 	echo "=== Copying patches ==="; \
-	for p in patches/000*.patch; do \
+	for p in patches/0*.patch; do \
 	  if [ -f "$$p" ]; then \
 	    cp "$$p" "$$HOME/rpmbuild/SOURCES/"; \
 	    echo "  Copied: $$p"; \
