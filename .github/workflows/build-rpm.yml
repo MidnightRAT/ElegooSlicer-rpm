@@ -72,6 +72,7 @@ jobs:
           VERSION=${{ steps.version.outputs.version }}
           rpmdev-setuptree
           cp elegoo-slicer-${VERSION}-src.tar.gz ~/rpmbuild/SOURCES/
+          cp CHANGELOG.md README.md DEPS.md ~/rpmbuild/SOURCES/
           for p in patches/0*.patch; do
             cp "$p" ~/rpmbuild/SOURCES/
           done

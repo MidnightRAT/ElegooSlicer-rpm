@@ -7,6 +7,9 @@ Summary:        Open-source slicer for FDM 3D printers
 License:        AGPL-3.0
 URL:            https://github.com/ELEGOO-3D/ElegooSlicer
 Source0:        %{name}-%{version}-src.tar.gz
+Source1:        CHANGELOG.md
+Source2:        README.md
+Source3:        DEPS.md
 # Patches
 Patch2:         0002-use-system-libs.patch
 Patch3:         0003-remove-bundled-nlohmann.patch
@@ -202,9 +205,9 @@ done
 install -Dm644 LICENSE.txt %{buildroot}/usr/share/licenses/%{name}/LICENSE
 
 # Documentation
-install -Dm644 CHANGELOG.md %{buildroot}/opt/ElegooSlicer/CHANGELOG.md
-install -Dm644 README.md %{buildroot}/opt/ElegooSlicer/README.md
-install -Dm644 DEPS.md %{buildroot}/opt/ElegooSlicer/DEPS.md
+install -Dm644 %{SOURCE1} %{buildroot}/opt/ElegooSlicer/CHANGELOG.md
+install -Dm644 %{SOURCE2} %{buildroot}/opt/ElegooSlicer/README.md
+install -Dm644 %{SOURCE3} %{buildroot}/opt/ElegooSlicer/DEPS.md
 
 %files
 /opt/ElegooSlicer

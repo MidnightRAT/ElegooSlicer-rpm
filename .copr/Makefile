@@ -22,6 +22,7 @@ srpm:
 	rpmdev-setuptree; \
 	mkdir -p "$$HOME/rpmbuild/SOURCES" "$$HOME/rpmbuild/SPECS"; \
 	cp "elegoo-slicer-$${VERSION}-src.tar.gz" "$$HOME/rpmbuild/SOURCES/"; \
+	cp CHANGELOG.md README.md DEPS.md "$$HOME/rpmbuild/SOURCES/"; \
 	\
 	echo "=== Copying patches ==="; \
 	for p in patches/0*.patch; do \
