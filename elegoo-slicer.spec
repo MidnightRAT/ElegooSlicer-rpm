@@ -7,9 +7,16 @@ Summary:        Open-source slicer for FDM 3D printers
 License:        AGPL-3.0
 URL:            https://github.com/ELEGOO-3D/ElegooSlicer
 Source0:        %{name}-%{version}-src.tar.gz
-# Use system -devel packages instead of bundled deps (TBB, Blosc, NLopt,
-# Cereal, GLEW, GMP, MPFR, zlib, png, expat, curl, jpeg, freetype, openssl)
+# Patches
 Patch2:         0002-use-system-libs.patch
+Patch3:         0003-remove-bundled-nlohmann.patch
+Patch4:         0004-find-openvdb-imath-compat.patch
+Patch5:         0005-make-sentry-optional.patch
+Patch6:         0006-cmake4-compat-deps.patch
+Patch7:         0007-add-fix-cmake4-sh.patch
+Patch8:         0008-wxwidgets-patch-command.patch
+Patch9:         0009-elegoolink-patch-command.patch
+Patch10:        0010-use-system-nlohmann-json.patch
 
 # Runtime deps
 Requires:       gtk3
@@ -60,6 +67,7 @@ BuildRequires:  openvdb-devel
 BuildRequires:  mpfr-devel
 BuildRequires:  CGAL-devel
 BuildRequires:  imath-devel
+BuildRequires:  json-devel
 
 %description
 ElegooSlicer is an open-source slicer compatible with most FDM printers.
@@ -68,138 +76,18 @@ Based on OrcaSlicer/PrusaSlicer, supporting STL, OBJ, 3MF file formats.
 %prep
 %setup -n ElegooSlicer-%{version}
 
-# System-libs support (ported from OrcaSlicer USE_SYSTEM_LIBS approach)
 %patch -P2 -p1
+%patch -P3 -p1
+%patch -P4 -p1
+%patch -P5 -p1
+%patch -P6 -p1
+%patch -P7 -p1
+%patch -P8 -p1
+%patch -P9 -p1
+%patch -P10 -p1
 
-# Remove bundled nlohmann (conflicts with system nlohmann from opencv-devel on GCC 16)
-rm -rf deps_src/nlohmann
-sed -i '/add_subdirectory(nlohmann)/d' deps_src/CMakeLists.txt
-
-# Patch FindOpenVDB.cmake for Fedora 44 (OpenEXR 3.x, Imath instead of IlmBase)
-python3 << 'PYEOF'
-with open('cmake/modules/FindOpenVDB.cmake', 'r') as f:
-    c = f.read()
-c = c.replace(
-"""find_package(IlmBase QUIET)
-if(NOT IlmBase_FOUND)
-  pkg_check_modules(IlmBase QUIET IlmBase)
-endif()
-if (IlmBase_FOUND AND NOT TARGET IlmBase::Half)
-  message(STATUS "Falling back to IlmBase found by pkg-config...")
-
-  find_library(IlmHalf_LIBRARY NAMES Half)
-  if(IlmHalf_LIBRARY-NOTFOUND OR NOT IlmBase_INCLUDE_DIRS)
-    just_fail("IlmBase::Half can not be found!")
-  endif()
-  
-  add_library(IlmBase::Half UNKNOWN IMPORTED)
-  set_target_properties(IlmBase::Half PROPERTIES
-    IMPORTED_LOCATION "${IlmHalf_LIBRARY}"
-    INTERFACE_INCLUDE_DIRECTORIES "${IlmBase_INCLUDE_DIRS}")
-elseif(NOT IlmBase_FOUND)
-  just_fail("IlmBase::Half can not be found!")
-endif()""",
-"""# Fedora 44: OpenEXR 3.x moved IlmBase to Imath
-find_package(Imath QUIET)
-if(Imath_FOUND AND NOT TARGET IlmBase::Half)
-  message(STATUS "Creating IlmBase::Half from Imath::Imath (OpenEXR 3.x)")
-  add_library(IlmBase::Half INTERFACE IMPORTED)
-  set_target_properties(IlmBase::Half PROPERTIES
-    INTERFACE_LINK_LIBRARIES "Imath::Imath")
-else()
-  find_package(IlmBase QUIET)
-  if(NOT IlmBase_FOUND)
-    pkg_check_modules(IlmBase QUIET IlmBase)
-  endif()
-  if (IlmBase_FOUND AND NOT TARGET IlmBase::Half)
-    find_library(IlmHalf_LIBRARY NAMES Half)
-    if(IlmHalf_LIBRARY-NOTFOUND OR NOT IlmBase_INCLUDE_DIRS)
-      just_fail("IlmBase::Half can not be found!")
-    endif()
-    add_library(IlmBase::Half UNKNOWN IMPORTED)
-    set_target_properties(IlmBase::Half PROPERTIES
-      IMPORTED_LOCATION "${IlmHalf_LIBRARY}"
-      INTERFACE_INCLUDE_DIRECTORIES "${IlmBase_INCLUDE_DIRS}")
-  elseif(NOT IlmBase_FOUND)
-    just_fail("IlmBase::Half can not be found!")
-  endif()
-endif()""")
-c = c.replace(
-    'if(OpenVDB_USES_BLOSC)\n  find_package(Blosc REQUIRED)\nendif()',
-    '# Blosc already found by fallback search above')
-with open('cmake/modules/FindOpenVDB.cmake', 'w') as f:
-    f.write(c)
-print('FindOpenVDB patched')
-PYEOF
-
-# Make sentry optional (no system sentry package on Fedora)
-python3 << 'PYEOF'
-with open('src/CMakeLists.txt', 'r') as f:
-    c = f.read()
-c = c.replace(
-    'find_package(sentry CONFIG REQUIRED)',
-    'find_package(sentry CONFIG QUIET)')
-c = c.replace(
-    'target_link_libraries(ElegooSlicer sentry::sentry)\n# Setup sentry crashpad_handler for all platforms\nelegooslicer_setup_sentry_handler(ElegooSlicer)',
-    'if(sentry_FOUND)\n    target_link_libraries(ElegooSlicer sentry::sentry)\n    elegooslicer_setup_sentry_handler(ElegooSlicer)\nendif()')
-with open('src/CMakeLists.txt', 'w') as f:
-    f.write(c)
-print('Sentry made optional')
-PYEOF
-
-# Patch deps/CMakeLists.txt: cmake 4 compat for ExternalProject sub-builds
-sed -i '1i set(CMAKE_POLICY_VERSION_MINIMUM 3.5)' deps/CMakeLists.txt
-python3 << 'PYEOF'
-with open('deps/CMakeLists.txt') as f:
-    c = f.read()
-c = c.replace(
-    '-DBUILD_SHARED_LIBS:BOOL=OFF\n            ${_cmake_osx_arch}\n            "${_configs_line}"\n            ${DEP_CMAKE_OPTS}\n            ${P_ARGS_CMAKE_ARGS}',
-    '-DBUILD_SHARED_LIBS:BOOL=OFF\n            -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.5\n            ${_cmake_osx_arch}\n            "${_configs_line}"\n            ${DEP_CMAKE_OPTS}\n            ${P_ARGS_CMAKE_ARGS}')
-with open('deps/CMakeLists.txt', 'w') as f:
-    f.write(c)
-print('deps/CMakeLists.txt patched')
-PYEOF
-
-# Create fix-cmake4.sh: patches cmake_minimum_required(VERSION 2.x) and missing includes
-cat > deps/fix-cmake4.sh << 'FIXSCRIPT'
-#!/bin/bash
-find "$1" \( -name CMakeLists.txt -o -name "*.cmake" \) -exec grep -l "cmake_minimum_required(VERSION 2" {} + 2>/dev/null | while read f; do
-  sed -i 's/cmake_minimum_required(VERSION 2/cmake_minimum_required(VERSION 3.5/g' "$f"
-done
-if [ -f "$1/include/events/event_system.h" ]; then
-  head -1 "$1/include/events/event_system.h" | grep -q "algorithm" || \
-    sed -i '1i #include <algorithm>' "$1/include/events/event_system.h"
-fi
-FIXSCRIPT
+# Ensure fix-cmake4.sh is executable (patch may not preserve mode)
 chmod +x deps/fix-cmake4.sh
-
-# Patch wxWidgets: add PATCH_COMMAND to fix cmake_minimum_required before configure
-python3 << 'PYEOF'
-import os
-with open('deps/wxWidgets/wxWidgets.cmake') as f:
-    c = f.read()
-script = os.path.abspath('deps/fix-cmake4.sh')
-c = c.replace(
-    '    FORCE_RELEASE_CONFIG  # wxWidgets doesn\'t support RelWithDebInfo configuration',
-    f'    PATCH_COMMAND {script} <SOURCE_DIR>\n    FORCE_RELEASE_CONFIG  # wxWidgets doesn\'t support RelWithDebInfo configuration')
-with open('deps/wxWidgets/wxWidgets.cmake', 'w') as f:
-    f.write(c)
-print('wxWidgets PATCH_COMMAND added')
-PYEOF
-
-# Patch elegoolink: add PATCH_COMMAND to fix cmake_minimum_required and missing includes
-python3 << 'PYEOF'
-import os
-with open('deps/elegoolink/elegoolink.cmake') as f:
-    c = f.read()
-script = os.path.abspath('deps/fix-cmake4.sh')
-c = c.replace(
-    'elegooslicer_add_cmake_project(elegoolink',
-    f'elegooslicer_add_cmake_project(elegoolink\n    PATCH_COMMAND {script} <SOURCE_DIR>')
-with open('deps/elegoolink/elegoolink.cmake', 'w') as f:
-    f.write(c)
-print('elegoolink PATCH_COMMAND added')
-PYEOF
 
 # Download web dependencies (skip if already included in tarball)
 mkdir -p resources/plugins/elegoolink/web
@@ -221,8 +109,8 @@ export CMAKE_POLICY_VERSION_MINIMUM=3.5
 export CXXFLAGS="${CXXFLAGS} -Wno-error=template-body -Wno-error=overloaded-virtual"
 
 # Limit parallelism to avoid OOM on CI (GitHub Actions has ~7GB RAM)
-NPROC_DEPS=8
-NPROC_BUILD=8
+NPROC_DEPS=2
+NPROC_BUILD=2
 
 # Optionally restore pre-built dependencies from a local cache (skips ~1.5h rebuild)
 DEPS_CACHE="${DEPS_CACHE:-}"
@@ -313,10 +201,18 @@ done
 # License
 install -Dm644 LICENSE.txt %{buildroot}/usr/share/licenses/%{name}/LICENSE
 
+# Documentation
+install -Dm644 CHANGELOG.md %{buildroot}/opt/ElegooSlicer/CHANGELOG.md
+install -Dm644 README.md %{buildroot}/opt/ElegooSlicer/README.md
+install -Dm644 DEPS.md %{buildroot}/opt/ElegooSlicer/DEPS.md
+
 %files
 /opt/ElegooSlicer
 /usr/share/applications/elegoo-slicer.desktop
 /usr/share/icons/hicolor/*/apps/elegoo-slicer.png
 /usr/share/licenses/%{name}/LICENSE
+/opt/ElegooSlicer/CHANGELOG.md
+/opt/ElegooSlicer/README.md
+/opt/ElegooSlicer/DEPS.md
 
 %changelog

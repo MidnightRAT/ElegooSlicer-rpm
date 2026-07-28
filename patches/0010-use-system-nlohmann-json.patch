@@ -1,0 +1,276 @@
+diff -ruN /tmp/elegoo-orig2/src/ElegooSlicer.cpp /tmp/elegoo-new2/src/ElegooSlicer.cpp
+--- a/src/ElegooSlicer.cpp	2026-07-28 04:15:55.571473157 +0300
++++ b/src/ElegooSlicer.cpp	2026-07-28 04:15:58.716647671 +0300
+@@ -28,7 +28,7 @@
+ #include <mutex>
+ #include <boost/thread.hpp>
+ //add json logic
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ using namespace nlohmann;
+ #endif
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/AppConfig.cpp /tmp/elegoo-new2/src/libslic3r/AppConfig.cpp
+--- a/src/libslic3r/AppConfig.cpp	2026-07-28 04:15:55.571926988 +0300
++++ b/src/libslic3r/AppConfig.cpp	2026-07-28 04:15:58.683545995 +0300
+@@ -7,7 +7,7 @@
+ #include "LocalesUtils.hpp"
+ #include "Thread.hpp"
+ #include "format.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include <utility>
+ #include <vector>
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/AppConfig.hpp /tmp/elegoo-new2/src/libslic3r/AppConfig.hpp
+--- a/src/libslic3r/AppConfig.hpp	2026-07-28 04:15:55.571972279 +0300
++++ b/src/libslic3r/AppConfig.hpp	2026-07-28 04:15:58.680663459 +0300
+@@ -4,7 +4,7 @@
+ #include <set>
+ #include <map>
+ #include <string>
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include <boost/algorithm/string/trim_all.hpp>
+ 
+ #include "libslic3r/Config.hpp"
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/Config.cpp /tmp/elegoo-new2/src/libslic3r/Config.cpp
+--- a/src/libslic3r/Config.cpp	2026-07-28 04:15:55.573199725 +0300
++++ b/src/libslic3r/Config.cpp	2026-07-28 04:15:58.495148009 +0300
+@@ -26,7 +26,7 @@
+ #include <boost/format.hpp>
+ #include <string.h>
+ //BBS: add json support
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ using namespace nlohmann;
+ 
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/Config.hpp /tmp/elegoo-new2/src/libslic3r/Config.hpp
+--- a/src/libslic3r/Config.hpp	2026-07-28 04:15:55.573235459 +0300
++++ b/src/libslic3r/Config.hpp	2026-07-28 04:15:58.491836980 +0300
+@@ -15,7 +15,7 @@
+ #include "clonable_ptr.hpp"
+ #include "Exception.hpp"
+ #include "Point.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include <boost/algorithm/string/predicate.hpp>
+ #include <boost/algorithm/string/trim.hpp>
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/Format/bbs_3mf.cpp /tmp/elegoo-new2/src/libslic3r/Format/bbs_3mf.cpp
+--- a/src/libslic3r/Format/bbs_3mf.cpp	2026-07-28 04:15:55.575203160 +0300
++++ b/src/libslic3r/Format/bbs_3mf.cpp	2026-07-28 04:15:58.214658542 +0300
+@@ -48,7 +48,7 @@
+ #include <expat.h>
+ #include <Eigen/Dense>
+ #include "miniz_extension.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include "TextConfiguration.hpp"
+ #include "EmbossShape.hpp"
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/GCode/ThumbnailData.hpp /tmp/elegoo-new2/src/libslic3r/GCode/ThumbnailData.hpp
+--- a/src/libslic3r/GCode/ThumbnailData.hpp	2026-07-28 04:15:55.576242179 +0300
++++ b/src/libslic3r/GCode/ThumbnailData.hpp	2026-07-28 04:15:58.100920841 +0300
+@@ -3,7 +3,7 @@
+ 
+ #include <vector>
+ #include "libslic3r/Point.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ namespace Slic3r {
+ 
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/Print.cpp /tmp/elegoo-new2/src/libslic3r/Print.cpp
+--- a/src/libslic3r/Print.cpp	2026-07-28 04:15:55.578594245 +0300
++++ b/src/libslic3r/Print.cpp	2026-07-28 04:15:57.797187135 +0300
+@@ -33,7 +33,7 @@
+ #include <tbb/parallel_for.h>
+ 
+ //BBS: add json support
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include "GCode/ConflictChecker.hpp"
+ 
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/PrinterNetworkInfo.hpp /tmp/elegoo-new2/src/libslic3r/PrinterNetworkInfo.hpp
+--- a/src/libslic3r/PrinterNetworkInfo.hpp	2026-07-28 04:15:55.579174269 +0300
++++ b/src/libslic3r/PrinterNetworkInfo.hpp	2026-07-28 04:15:57.761390110 +0300
+@@ -4,7 +4,7 @@
+ 
+ #include <string>
+ #include <functional>
+-#include "../nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include <vector>
+ #include <map>
+ #include "PrinterNetworkResult.hpp"
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/ProjectTask.cpp /tmp/elegoo-new2/src/libslic3r/ProjectTask.cpp
+--- a/src/libslic3r/ProjectTask.cpp	2026-07-28 04:15:55.579225210 +0300
++++ b/src/libslic3r/ProjectTask.cpp	2026-07-28 04:15:57.753962398 +0300
+@@ -16,7 +16,7 @@
+ #include <boost/uuid/uuid_io.hpp>
+ #include <boost/property_tree/ptree.hpp>
+ #include <boost/property_tree/json_parser.hpp>
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ using namespace nlohmann;
+ 
+diff -ruN /tmp/elegoo-orig2/src/libslic3r/Support/TreeSupport.cpp /tmp/elegoo-new2/src/libslic3r/Support/TreeSupport.cpp
+--- a/src/libslic3r/Support/TreeSupport.cpp	2026-07-28 04:15:55.580627004 +0300
++++ b/src/libslic3r/Support/TreeSupport.cpp	2026-07-28 04:15:57.562278655 +0300
+@@ -39,7 +39,7 @@
+ //#define SUPPORT_TREE_DEBUG_TO_SVG
+ 
+ #ifdef SUPPORT_TREE_DEBUG_TO_SVG
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #endif
+ namespace Slic3r
+ {
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/DeviceManager.hpp /tmp/elegoo-new2/src/slic3r/GUI/DeviceManager.hpp
+--- a/src/slic3r/GUI/DeviceManager.hpp	2026-07-28 04:15:55.583805748 +0300
++++ b/src/slic3r/GUI/DeviceManager.hpp	2026-07-28 04:15:57.163909828 +0300
+@@ -9,7 +9,7 @@
+ #include <chrono>
+ #include <boost/thread.hpp>
+ #include <boost/nowide/fstream.hpp>
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "libslic3r/ProjectTask.hpp"
+ #include "slic3r/Utils/json_diff.hpp"
+ #include "slic3r/Utils/NetworkAgent.hpp"
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/HMS.hpp /tmp/elegoo-new2/src/slic3r/GUI/HMS.hpp
+--- a/src/slic3r/GUI/HMS.hpp	2026-07-28 04:15:55.587155846 +0300
++++ b/src/slic3r/GUI/HMS.hpp	2026-07-28 04:15:56.755578956 +0300
+@@ -10,7 +10,7 @@
+ #include "BitmapCache.hpp"
+ #include "slic3r/Utils/Http.hpp"
+ #include "libslic3r/Thread.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ namespace Slic3r {
+ namespace GUI {
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/Jobs/OAuthJob.cpp /tmp/elegoo-new2/src/slic3r/GUI/Jobs/OAuthJob.cpp
+--- a/src/slic3r/GUI/Jobs/OAuthJob.cpp	2026-07-28 04:15:55.587869374 +0300
++++ b/src/slic3r/GUI/Jobs/OAuthJob.cpp	2026-07-28 04:15:56.647103003 +0300
+@@ -3,7 +3,7 @@
+ #include "Http.hpp"
+ #include "ThreadSafeQueue.hpp"
+ #include "slic3r/GUI/I18N.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include <boost/algorithm/string.hpp>
+ #include <thread>
+ 
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/Plater.cpp /tmp/elegoo-new2/src/slic3r/GUI/Plater.cpp
+--- a/src/slic3r/GUI/Plater.cpp	2026-07-28 04:15:55.589684894 +0300
++++ b/src/slic3r/GUI/Plater.cpp	2026-07-28 04:15:56.423384770 +0300
+@@ -147,7 +147,7 @@
+ 
+ #include "libslic3r/CustomGCode.hpp"
+ #include "libslic3r/Platform.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include "PhysicalPrinterDialog.hpp"
+ #include "PrintHostDialogs.hpp"
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/Printer/PrinterFileSystem.cpp /tmp/elegoo-new2/src/slic3r/GUI/Printer/PrinterFileSystem.cpp
+--- a/src/slic3r/GUI/Printer/PrinterFileSystem.cpp	2026-07-28 04:15:55.590233043 +0300
++++ b/src/slic3r/GUI/Printer/PrinterFileSystem.cpp	2026-07-28 04:15:56.387024998 +0300
+@@ -15,7 +15,7 @@
+ 
+ #include <wx/mstream.h>
+ 
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include <cstring>
+ 
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/Project.hpp /tmp/elegoo-new2/src/slic3r/GUI/Project.hpp
+--- a/src/slic3r/GUI/Project.hpp	2026-07-28 04:15:55.590447702 +0300
++++ b/src/slic3r/GUI/Project.hpp	2026-07-28 04:15:56.356275064 +0300
+@@ -23,7 +23,7 @@
+ #include "wx/textctrl.h"
+ #include <wx/timer.h>
+ 
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "slic3r/Utils/json_diff.hpp"
+ 
+ #include <map>
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/TaskManager.cpp /tmp/elegoo-new2/src/slic3r/GUI/TaskManager.cpp
+--- a/src/slic3r/GUI/TaskManager.cpp	2026-07-28 04:15:55.591665598 +0300
++++ b/src/slic3r/GUI/TaskManager.cpp	2026-07-28 04:15:56.214807779 +0300
+@@ -1,7 +1,7 @@
+ #include "TaskManager.hpp"
+ 
+ #include "libslic3r/Thread.hpp"
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "MainFrame.hpp"
+ #include "GUI_App.hpp"
+ 
+diff -ruN /tmp/elegoo-orig2/src/slic3r/GUI/UserManager.hpp /tmp/elegoo-new2/src/slic3r/GUI/UserManager.hpp
+--- a/src/slic3r/GUI/UserManager.hpp	2026-07-28 04:15:55.591953297 +0300
++++ b/src/slic3r/GUI/UserManager.hpp	2026-07-28 04:15:56.180754071 +0300
+@@ -8,7 +8,7 @@
+ #include <memory>
+ #include <chrono>
+ #include <boost/thread.hpp>
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "slic3r/Utils/json_diff.hpp"
+ #include "slic3r/Utils/NetworkAgent.hpp"
+ 
+diff -ruN /tmp/elegoo-orig2/src/slic3r/Utils/json_diff.cpp /tmp/elegoo-new2/src/slic3r/Utils/json_diff.cpp
+--- a/src/slic3r/Utils/json_diff.cpp	2026-07-28 04:15:55.595680502 +0300
++++ b/src/slic3r/Utils/json_diff.cpp	2026-07-28 04:15:55.638906730 +0300
+@@ -8,7 +8,7 @@
+ #include <functional>
+ 
+ #include <stdio.h>
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ #include <libslic3r/Utils.hpp>
+ 
+diff -ruN /tmp/elegoo-orig2/src/slic3r/Utils/json_diff.hpp /tmp/elegoo-new2/src/slic3r/Utils/json_diff.hpp
+--- a/src/slic3r/Utils/json_diff.hpp	2026-07-28 04:15:55.595694945 +0300
++++ b/src/slic3r/Utils/json_diff.hpp	2026-07-28 04:15:55.636369975 +0300
+@@ -5,7 +5,7 @@
+ #include <atomic>
+ #include <vector>
+ 
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ 
+ 
+ using json = nlohmann::json;
+diff -ruN /tmp/elegoo-orig2/src/slic3r/Utils/JsonUtils.hpp /tmp/elegoo-new2/src/slic3r/Utils/JsonUtils.hpp
+--- a/src/slic3r/Utils/JsonUtils.hpp	2026-07-28 04:15:55.594979183 +0300
++++ b/src/slic3r/Utils/JsonUtils.hpp	2026-07-28 04:15:55.738431437 +0300
+@@ -2,7 +2,7 @@
+ #define __JSON_UTILS_HPP
+ 
+ 
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include <string>
+ 
+ 
+diff -ruN /tmp/elegoo-orig2/src/slic3r/Utils/SimplyPrint.cpp /tmp/elegoo-new2/src/slic3r/Utils/SimplyPrint.cpp
+--- a/src/slic3r/Utils/SimplyPrint.cpp	2026-07-28 04:15:55.595476757 +0300
++++ b/src/slic3r/Utils/SimplyPrint.cpp	2026-07-28 04:15:55.670416704 +0300
+@@ -5,7 +5,7 @@
+ #include <boost/nowide/fstream.hpp>
+ #include <boost/filesystem.hpp>
+ 
+-#include "nlohmann/json.hpp"
++#include <nlohmann/json.hpp>
+ #include "libslic3r/Utils.hpp"
+ #include "slic3r/GUI/I18N.hpp"
+ #include "slic3r/GUI/format.hpp"

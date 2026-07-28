@@ -1,0 +1,10 @@
+--- a/deps_src/CMakeLists.txt	2026-07-28 00:37:18.707028919 +0300
++++ b/deps_src/CMakeLists.txt	2026-07-28 00:37:55.602578820 +0300
+@@ -8,7 +8,6 @@
+ add_subdirectory(ankerl)
+ add_subdirectory(fast_float)
+ add_subdirectory(nanosvg)
+-add_subdirectory(nlohmann)
+ add_subdirectory(spline)      # Header-only spline library
+ add_subdirectory(stb_dxt)     # Header-only STB DXT compression library
+ 

@@ -1,0 +1,10 @@
+--- a/deps/elegoolink/elegoolink.cmake	2026-07-28 00:37:18.714353205 +0300
++++ b/deps/elegoolink/elegoolink.cmake	2026-07-28 00:38:08.761923948 +0300
+@@ -35,6 +35,7 @@
+ endif()
+ 
+ elegooslicer_add_cmake_project(elegoolink
++    PATCH_COMMAND ${CMAKE_CURRENT_LIST_DIR}/../fix-cmake4.sh <SOURCE_DIR>
+ 
+     GIT_REPOSITORY      ${ELEGOOLINK_GIT_REPOSITORY}
+     GIT_TAG             origin/main

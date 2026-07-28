@@ -90,6 +90,7 @@ Automatically builds for Fedora 43+ from the latest main branch:
 ElegooSlicer-rpm/
 ├── .copr/Makefile         # COPR SRPM build script
 ├── .github/workflows/     # GitHub Actions workflow
+├── DEPS.md                # Library dependency table
 ├── elegoo-slicer.spec     # RPM spec file
 ├── patches/               # Source patches
 ├── CHANGELOG.md

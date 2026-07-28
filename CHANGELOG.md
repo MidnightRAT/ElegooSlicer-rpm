@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ## [Unreleased]
 
+## [1.0.8] - 2026-07-28
+
+### Added
+- DEPS.md: comprehensive library dependency table (embedded vs system)
+- CHANGELOG.md, README.md, DEPS.md now included in the RPM package
+
+### Changed
+- Reduce build parallelism to 2 to avoid OOM on resource-constrained builders
+- Bump RELEASE to 8
+- README.md: add DEPS.md to project structure
+
 ## [1.0.7] - 2026-07-27
 
 ### Changed

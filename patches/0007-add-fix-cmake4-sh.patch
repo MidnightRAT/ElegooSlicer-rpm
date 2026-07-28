@@ -1,0 +1,11 @@
+--- /dev/null	2026-07-27 22:58:44.061030746 +0300
++++ b/deps/fix-cmake4.sh	2026-07-28 00:38:05.050493481 +0300
+@@ -0,0 +1,8 @@
++#!/bin/bash
++find "$1" \( -name CMakeLists.txt -o -name "*.cmake" \) -exec grep -l "cmake_minimum_required(VERSION 2" {} + 2>/dev/null | while read f; do
++  sed -i 's/cmake_minimum_required(VERSION 2/cmake_minimum_required(VERSION 3.5/g' "$f"
++done
++if [ -f "$1/include/events/event_system.h" ]; then
++  head -1 "$1/include/events/event_system.h" | grep -q "algorithm" || \
++    sed -i '1i #include <algorithm>' "$1/include/events/event_system.h"
++fi
