@@ -38,9 +38,9 @@ jobs:
             libjpeg-turbo-devel libpng-devel \
             openssl-devel libcurl-devel \
             freetype-devel fontconfig-devel \
-eigen3-devel cereal-devel \
-  gmp-devel mpfr-devel qhull-devel draco-devel draco-static CGAL-devel \
-  extra-cmake-modules eglexternalplatform-devel wayland-devel wayland-protocols-devel \
+            eigen3-devel cereal-devel \
+            gmp-devel mpfr-devel qhull-devel draco-devel draco-static CGAL-devel \
+            extra-cmake-modules eglexternalplatform-devel wayland-devel wayland-protocols-devel \
             gstreamer1-devel gstreamer1-plugins-good gstreamermm-devel \
             libX11-devel libXi-devel libXrandr-devel libXinerama-devel \
             libXcursor-devel libXcomposite-devel libXdamage-devel libXext-devel \
