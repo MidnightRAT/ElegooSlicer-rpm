@@ -15,14 +15,14 @@ srpm:
 	\
 	echo "=== Downloading source tarball ==="; \
 	wget -q "https://github.com/elegoo-repo/ElegooSlicer/archive/refs/tags/v$${VERSION}.tar.gz" \
-	  -O "elegoo-slicer-$${VERSION}-src.tar.gz"; \
-	ls -lh "elegoo-slicer-$${VERSION}-src.tar.gz"; \
+	  -O "ElegooSlicer-$${VERSION}.tar.gz"; \
+	ls -lh "ElegooSlicer-$${VERSION}.tar.gz"; \
 	\
 	echo "=== Preparing rpmbuild tree ==="; \
 	rpmdev-setuptree; \
 	mkdir -p "$$HOME/rpmbuild/SOURCES" "$$HOME/rpmbuild/SPECS"; \
-	cp "elegoo-slicer-$${VERSION}-src.tar.gz" "$$HOME/rpmbuild/SOURCES/"; \
-	cp CHANGELOG.md README.md DEPS.md "$$HOME/rpmbuild/SOURCES/"; \
+	cp "ElegooSlicer-$${VERSION}.tar.gz" "$$HOME/rpmbuild/SOURCES/"; \
+	cp README.md "$$HOME/rpmbuild/SOURCES/"; \
 	\
 	echo "=== Copying patches ==="; \
 	for p in patches/0*.patch; do \
@@ -35,7 +35,7 @@ srpm:
 	echo "=== Generating spec file from template ==="; \
 	test -f elegoo-slicer.spec || { echo "ERROR: elegoo-slicer.spec not found in repo root"; exit 1; }; \
 	sed -e "s/@VERSION@/$${VERSION}/g" \
-	    	-e "s/@RELEASE@/8/g" \
+	    	-e "s/@RELEASE@/4/g" \
 	    elegoo-slicer.spec > "$$HOME/rpmbuild/SPECS/elegoo-slicer.spec"; \
 	\
 	echo "=== Building SRPM ==="; \

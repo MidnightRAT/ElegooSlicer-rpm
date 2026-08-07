@@ -1,0 +1,22 @@
+--- a/deps/elegoolink/elegoolink.cmake	2026-08-06 17:51:31.669411636 +0300
++++ b/deps/elegoolink/elegoolink.cmake	2026-08-06 17:51:31.684939708 +0300
+@@ -38,11 +38,18 @@
+ 
+     GIT_REPOSITORY      ${ELEGOOLINK_GIT_REPOSITORY}
+     GIT_TAG             origin/main
++
++    # RPM patch: fix GCC16 - add missing <algorithm> include (std::find_if)
++    PATCH_COMMAND
++        ${CMAKE_COMMAND} -E echo "Patching event_system.h for GCC 16..."
++        COMMAND sed -i "/#include <mutex>/a #include <algorithm>"
++            <SOURCE_DIR>/include/events/event_system.h
++
+     
+     DEPENDS 
+         dep_ixwebsocket 
+         dep_PahoMqttCpp
+-        dep_CURL
++        ${CURL_PKG}
+         ${OPENSSL_PKG}
+ 
+     CMAKE_ARGS 

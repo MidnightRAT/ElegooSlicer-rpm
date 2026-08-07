@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
     paths-ignore:
-      - 'CHANGELOG.md'
       - 'README.md'
       - '.copr/**'
   workflow_dispatch:
@@ -28,29 +27,29 @@ jobs:
       - name: Install build dependencies
         run: |
           dnf install -y \
-            rpm-build rpmdevtools git wget curl unzip \
-            cmake ninja-build gcc gcc-c++ pkgconf \
+            rpm-build rpmdevtools git git-lfs wget curl unzip \
+            cmake ninja-build gcc gcc-c++ make patch pkgconf \
             autoconf automake libtool m4 \
             perl-FindBin perl-IPC-Cmd \
-            libquadmath-devel nasm \
+            texinfo gettext python3 \
+            libquadmath-devel \
             dbus-devel gtk3-devel webkit2gtk4.1-devel \
-            glew-devel glfw-devel mesa-libGLU-devel mesa-libGL-devel \
+            glew-devel glfw-devel mesa-libGLU-devel mesa-libGL-devel libglvnd-devel \
             libjpeg-turbo-devel libpng-devel \
             openssl-devel libcurl-devel \
-            freetype-devel fontconfig-devel pango-devel \
+            freetype-devel fontconfig-devel \
             eigen3-devel cereal-devel \
-            extra-cmake-modules eglexternalplatform-devel \
-            gstreamer1-devel gstreamer1-plugins-base-devel gstreamermm-devel \
-            wayland-protocols-devel libxkbcommon-devel \
+            gmp-devel mpfr-devel qhull-devel draco-devel draco-static \
+            extra-cmake-modules eglexternalplatform-devel wayland-devel \
+            gstreamer1-devel gstreamer1-plugins-good gstreamermm-devel \
             libX11-devel libXi-devel libXrandr-devel libXinerama-devel \
             libXcursor-devel libXcomposite-devel libXdamage-devel libXext-devel \
             libXtst-devel libXfixes-devel libXmu-devel \
             at-spi2-core-devel libepoxy-devel \
             libspnav-devel libsecret-devel libmspack-devel \
-            texinfo chrpath \
+            desktop-file-utils \
             tbb-devel blosc-devel NLopt-devel opencv-devel \
-            opencascade-devel zlib-ng-compat-devel expat-devel \
-            openvdb-devel mpfr-devel CGAL-devel openexr-devel imath-devel
+            zlib-ng-compat-devel expat-devel openexr-devel
 
       - name: Get latest release version
         id: version
@@ -65,14 +64,14 @@ jobs:
           VERSION=${{ steps.version.outputs.version }}
           # Download source tarball from release (with 'v' prefix)
           wget -q "https://github.com/elegoo-repo/ElegooSlicer/archive/refs/tags/v${VERSION}.tar.gz" \
-            -O elegoo-slicer-${VERSION}-src.tar.gz
+            -O ElegooSlicer-${VERSION}.tar.gz
 
       - name: Prepare RPM build tree
         run: |
           VERSION=${{ steps.version.outputs.version }}
           rpmdev-setuptree
-          cp elegoo-slicer-${VERSION}-src.tar.gz ~/rpmbuild/SOURCES/
-          cp CHANGELOG.md README.md DEPS.md ~/rpmbuild/SOURCES/
+          cp ElegooSlicer-${VERSION}.tar.gz ~/rpmbuild/SOURCES/
+          cp README.md ~/rpmbuild/SOURCES/
           for p in patches/0*.patch; do
             cp "$p" ~/rpmbuild/SOURCES/
           done
@@ -82,7 +81,7 @@ jobs:
           VERSION=${{ steps.version.outputs.version }}
           # Create spec file from template with correct version
           sed -e "s/@VERSION@/${VERSION}/g" \
-              -e "s/@RELEASE@/8/g" \
+              -e "s/@RELEASE@/4/g" \
               elegoo-slicer.spec > ~/rpmbuild/SPECS/elegoo-slicer.spec
 
       - name: Build RPM and SRPM

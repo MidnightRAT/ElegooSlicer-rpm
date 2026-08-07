@@ -1,0 +1,14 @@
+--- a/deps/CMakeLists.txt	2026-08-06 17:51:12.251847814 +0300
++++ b/deps/CMakeLists.txt	2026-08-06 17:51:12.265652765 +0300
+@@ -372,6 +372,11 @@
+ # 3.1 has everything in the right place, but the md5 funcs used are deprecated
+ # a grep across the repo shows it is used for other things
+ # TODO: update openssl and everything that uses <openssl/md5.h>
++# RPM patch: detect and use system OpenSSL and CURL (non-FLATPAK builds)
++if(NOT FLATPAK)
++    find_package(OpenSSL QUIET)
++    find_package(CURL QUIET)
++endif()
+ set(OPENSSL_PKG "")
+ if(NOT OPENSSL_FOUND)
+     include(OpenSSL/OpenSSL.cmake)
