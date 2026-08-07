@@ -6,7 +6,7 @@
 # Стратегія залежностей: системні бібліотеки де можливо,
 #   бундловані через deps/ де версії несумісні або пакет відсутній.
 #
-# Патчі:
+# Patches:
 #   0001 — deps/CMakeLists.txt: виявлення системних OpenSSL та CURL (поза FLATPAK)
 #   0002 — elegoolink/elegoolink.cmake: системний CURL (${CURL_PKG}) +
 #         PATCH_COMMAND додає #include <algorithm> для GCC 16
