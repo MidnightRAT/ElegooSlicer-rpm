@@ -244,6 +244,14 @@ done
 # Документація (README)
 install -D -m 644 %{SOURCE1} %{buildroot}%{_pkgdocdir}/README.md
 
+# Веб-ресурси plugin'а (elegoolink): static_web_server щукає їх за
+# resources_dir()/plugins/elegoolink/web (див. ElegooLink::init),
+# тоді як upstream кладе їх у resources/web/elegoolink. Дублюємо їх
+# в очікуване місце, щоб сторінка пристрою відкривалась.
+install -d %{buildroot}/opt/ElegooSlicer/resources/plugins/elegoolink/web
+cp -R %{buildroot}/opt/ElegooSlicer/resources/web/elegoolink/. \
+      %{buildroot}/opt/ElegooSlicer/resources/plugins/elegoolink/web/
+
 # ────────────────────────────────────────────────────────────────────────────
 %post
 /usr/bin/update-desktop-database %{_datadir}/applications &>/dev/null ||:
@@ -270,8 +278,11 @@ install -D -m 644 %{SOURCE1} %{buildroot}%{_pkgdocdir}/README.md
 # ────────────────────────────────────────────────────────────────────────────
 %changelog
 * Sat Aug 08 2026 ElegooSlicer RPM Packager <rpm@elegoo.com> - @VERSION@-@RELEASE@
+- Виправлено веб UI plugin'а elegoolink: файли копіюються в
+  resources/plugins/elegoolink/web (очікуваний static_web_server шлях), а не
+  лише у resources/web/elegoolink (виправлено "index.html: No such file")
 - Видалено CHANGELOG.md, DEPS.md, build-local.sh із проєкту
 - Замінено spec на версію з ElegooSlicer-rpm-all (системні OpenSSL+CURL)
 - Додано патчі 0001 (deps: system OpenSSL/CURL) та 0002 (elegoolink CURL+GCC16)
-- Інкремент реліза до 4
+- Інкремент реліза до 5
 - README.md оновлено відповідно до нової структури

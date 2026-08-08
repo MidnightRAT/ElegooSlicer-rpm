@@ -35,7 +35,7 @@ srpm:
 	echo "=== Generating spec file from template ==="; \
 	test -f elegoo-slicer.spec || { echo "ERROR: elegoo-slicer.spec not found in repo root"; exit 1; }; \
 	sed -e "s/@VERSION@/$${VERSION}/g" \
-	    	-e "s/@RELEASE@/4/g" \
+	    	-e "s/@RELEASE@/5/g" \
 	    elegoo-slicer.spec > "$$HOME/rpmbuild/SPECS/elegoo-slicer.spec"; \
 	\
 	echo "=== Building SRPM ==="; \
