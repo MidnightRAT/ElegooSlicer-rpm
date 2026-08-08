@@ -27,10 +27,11 @@ jobs:
       - name: Free disk space
         run: |
           df -h / /github 2>/dev/null || df -h /
-          rm -rf /usr/share/dotnet /usr/local/lib/android /opt/hostedtoolcache/CodeQL \
-            /opt/hostedtoolcache/go /opt/hostedtoolcache/node/current /opt/hostedtoolcache/python
-          find /usr/share/swift /usr/local/share/powershell /usr/share/powershell \
-            /usr/local/lib/python* /opt/ghc -maxdepth 0 -exec rm -rf {} + 2>/dev/null || true
+          rm -rf /usr/share/dotnet /usr/local/lib/android /opt/hostedtoolcache \
+            /usr/share/swift /usr/local/share/powershell /usr/share/powershell \
+            /usr/local/lib/python* /opt/ghc /opt/hostedtoolcache/CodeQL
+          rm -rf /usr/share/doc /usr/share/man /usr/share/info 2>/dev/null || true
+          rm -rf /root/.cache /root/.npm /var/cache /var/lib/apt/lists 2>/dev/null || true
           dnf -y clean all 2>/dev/null || true
           df -h / | tail -1
 

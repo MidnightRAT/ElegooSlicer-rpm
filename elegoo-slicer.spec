@@ -182,6 +182,15 @@ cmake -S deps -B deps/build \
 
 cmake --build deps/build
 
+# Звільняємо місце (GitHub runners невеликі): прибираємо сирці та проміжні кеші
+# окремих dep_*-prefix (збережені libs/headers/usr/local залишаються),
+# разом зі свжаченими з git збірками.
+find deps/build -maxdepth 1 -type d -name 'dep_*-prefix' -print0 | \
+while IFS= read -r -d '' d; do
+    rm -rf "$d/src" "$d/stamp" 2>/dev/null || true
+done
+rm -rf deps/build/downloads
+
 # ── Крок 2: основна збірка ───────────────────────────────────────────────────
 mkdir -p build
 cmake -S . -B build \
