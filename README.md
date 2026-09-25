@@ -73,7 +73,7 @@ wget -q "https://github.com/elegoo-repo/ElegooSlicer/archive/refs/tags/v${VERSIO
   -O ~/rpmbuild/SOURCES/ElegooSlicer-${VERSION}.tar.gz
 cp README.md ~/rpmbuild/SOURCES/
 cp patches/0*.patch ~/rpmbuild/SOURCES/
-sed -e "s/@VERSION@/${VERSION}/g" -e "s/@RELEASE@/4/g" \
+sed -e "s/@VERSION@/${VERSION}/g" -e "s/@RELEASE@/5/g" \
   elegoo-slicer.spec > ~/rpmbuild/SPECS/elegoo-slicer.spec
 rpmbuild -ba ~/rpmbuild/SPECS/elegoo-slicer.spec
 ```
@@ -95,6 +95,9 @@ Automatically:
 Automatically builds for Fedora from the latest main branch:
 
 - [COPR Project Page](https://copr.fedorainfracloud.org/projects/chirikrat/ElegooSlicer-rpm/)
+
+Enabled chroots: `fedora-44-x86_64`, `fedora-45-x86_64`
+(x86_64 only — the bundled Agora SDK ships prebuilt x86_64 `.so` libraries).
 
 **Note:** changes to `README.md` or `.copr/**` do not trigger the workflow.
 

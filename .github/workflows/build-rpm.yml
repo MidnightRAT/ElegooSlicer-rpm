@@ -18,7 +18,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container:
-      image: registry.fedoraproject.org/fedora:44
+      image: registry.fedoraproject.org/fedora:45
 
     steps:
       - name: Checkout this repository
