@@ -94,7 +94,7 @@ Automatically:
 
 Automatically builds for Fedora from the latest main branch:
 
-- [COPR Project Page](https://copr.fedorainfracloud.org/projects/chirikrat/ElegooSlicer-rpm/)
+- [COPR Project Page](https://copr.fedorainfracloud.org/coprs/chirikrat/ElegooSlicer-rpm/)
 
 Enabled chroots: `fedora-44-x86_64`, `fedora-45-x86_64`
 (x86_64 only — the bundled Agora SDK ships prebuilt x86_64 `.so` libraries).
