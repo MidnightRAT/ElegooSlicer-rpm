@@ -22,6 +22,13 @@ Two patches make this possible:
 - `patches/0001-deps-system-openssl-curl.patch` — deps build detects system OpenSSL and libcurl (non-flatpak).
 - `patches/0002-elegoolink-system-curl-algorithm.patch` — elegoolink uses system curl and adds missing `<algorithm>` include for GCC 16.
 
+A third patch is arch-specific:
+
+- `patches/0003-aarch64-agora.patch` — on `aarch64` only, replaces the bundled
+  x86_64 Agora RTM SDK (`.so` + headers) with an aarch64 build before
+  `elegoo-link` is configured; on `x86_64` it does nothing. See
+  [aarch64 support](#aarch64-support).
+
 ## Installation
 
 ### From COPR (Fedora, Recommended)
@@ -43,8 +50,8 @@ sudo dnf install elegoo-slicer-*.x86_64.rpm
 
 ```bash
 # Install build tools
-sudo dnf install -y rpm-build rpmdevtools git git-lfs wget curl \
-  cmake ninja-build gcc gcc-c++ make patch pkgconf \
+sudo dnf install -y rpm-build rpmdevtools git git-lfs wget curl unzip \
+  cmake ninja-build gcc gcc-c++ make patch pkgconf patchelf \
   autoconf automake libtool m4 \
   perl-FindBin perl-IPC-Cmd \
   texinfo gettext python3 libquadmath-devel \
@@ -73,7 +80,7 @@ wget -q "https://github.com/elegoo-repo/ElegooSlicer/archive/refs/tags/v${VERSIO
   -O ~/rpmbuild/SOURCES/ElegooSlicer-${VERSION}.tar.gz
 cp README.md ~/rpmbuild/SOURCES/
 cp patches/0*.patch ~/rpmbuild/SOURCES/
-sed -e "s/@VERSION@/${VERSION}/g" -e "s/@RELEASE@/5/g" \
+sed -e "s/@VERSION@/${VERSION}/g" -e "s/@RELEASE@/6/g" \
   elegoo-slicer.spec > ~/rpmbuild/SPECS/elegoo-slicer.spec
 rpmbuild -ba ~/rpmbuild/SPECS/elegoo-slicer.spec
 ```
@@ -96,10 +103,35 @@ Automatically builds for Fedora from the latest main branch:
 
 - [COPR Project Page](https://copr.fedorainfracloud.org/coprs/chirikrat/ElegooSlicer-rpm/)
 
-Enabled chroots: `fedora-44-x86_64`, `fedora-45-x86_64`
-(x86_64 only — the bundled Agora SDK ships prebuilt x86_64 `.so` libraries).
+Enabled chroots: `fedora-44-x86_64`, `fedora-45-x86_64`, `fedora-45-aarch64`
 
 **Note:** changes to `README.md` or `.copr/**` do not trigger the workflow.
+
+## aarch64 support
+
+The bundled Agora RTM SDK in `elegoo-link` (`thirdparty/agora/linux/`) only
+ships **x86_64** `.so` files, and cloud features cannot simply be switched off
+(`ENABLE_CLOUD_FEATURES`): the slicer calls them unconditionally from ~23
+files. There is also no official Agora C++ SDK for Linux aarch64.
+
+On `aarch64` the spec therefore stages a replacement in `%prep` (SHA256-pinned
+downloads) and patch `0003-aarch64-agora.patch` installs it into the cloned
+`elegoo-link` before it is configured:
+
+| | x86_64 | aarch64 |
+|---|---|---|
+| Libraries | bundled Agora C++ SDK 2.2.8 | Agora Java SDK 2.3.0 native libs ([`io.agora:rtm-java-aarch64`](https://repo1.maven.org/maven2/io/agora/rtm-java-aarch64/2.3.0/), Maven Central) |
+| Headers | bundled 2.2.8 | official Agora C++ SDK 2.3.0 |
+| SONAME `libagora_rtm_sdk.so` | present | added with `patchelf` (the Java SDK build has none, otherwise the binary would record an absolute build path as `DT_NEEDED`) |
+
+The aarch64 `.so` from the Java SDK links against the same C++ core and
+exports the same three symbols as the C++ SDK (`createAgoraRtmClient`,
+`getErrorReason`, `getVersion`), so it is a drop-in replacement. Headers are
+upgraded **together with** the libraries: 2.2.8 and 2.3.0 are not ABI
+compatible (`RtmConfig` gained a member, `IRtmEventHandler` lost a virtual).
+
+aarch64 RPMs are produced by COPR only (GitHub Actions runs on x86_64
+runners).
 
 ## Project Structure
 
@@ -110,7 +142,8 @@ ElegooSlicer-rpm/
 ├── elegoo-slicer.spec          # RPM spec file
 ├── patches/
 │   ├── 0001-deps-system-openssl-curl.patch
-│   └── 0002-elegoolink-system-curl-algorithm.patch
+│   ├── 0002-elegoolink-system-curl-algorithm.patch
+│   └── 0003-aarch64-agora.patch
 └── README.md
 ```
 

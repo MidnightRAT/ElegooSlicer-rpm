@@ -1,0 +1,55 @@
+--- a/deps/elegoolink/elegoolink.cmake
++++ b/deps/elegoolink/elegoolink.cmake
+@@ -34,6 +34,44 @@
+     set(ELEGOOLINK_GIT_REPOSITORY "https://github.com/ELEGOO-3D/elegoo-link.git")
+ endif()
+ 
++# RPM patch (aarch64): thirdparty/agora/linux only ships x86_64 Agora RTM
++# binaries.  When the RPM spec has staged an aarch64 SDK for us (see the
++# %prep section of elegoo-slicer.spec), swap the libraries and their headers
++# in before elegoo-link is configured.
++#
++# The aarch64 libraries come from Agora's Java SDK (which bundles the very
++# same C++ core as the C++ SDK) and are built against the 2.3.0 headers, so
++# both the libraries and the headers are replaced together - mixing the
++# 2.2.8 headers with the 2.3.0 library would break the ABI (RtmConfig gained
++# a member, IRtmEventHandler lost a virtual).
++#
++# libagora_rtm_sdk.so from the Java SDK also has no SONAME, so it gets the
++# same one as the x86_64 library here; without it the slicer binary would
++# record an absolute build directory path as its DT_NEEDED.
++if(RPM_AGORA_SRCDIR AND EXISTS "${RPM_AGORA_SRCDIR}/libagora_rtm_sdk.so")
++    set(_elegoolink_rpm_agora_cmds
++        COMMAND ${CMAKE_COMMAND} -E echo "Installing aarch64 Agora RTM SDK 2.3.0 into elegoo-link..."
++        COMMAND ${CMAKE_COMMAND} -E copy_directory
++            "${RPM_AGORA_SRCDIR}/include" <SOURCE_DIR>/thirdparty/agora/linux/include
++        COMMAND ${CMAKE_COMMAND} -E copy_if_different
++            "${RPM_AGORA_SRCDIR}/libagora_rtm_sdk.so"
++            <SOURCE_DIR>/thirdparty/agora/linux/libagora_rtm_sdk.so
++        COMMAND ${CMAKE_COMMAND} -E copy_if_different
++            "${RPM_AGORA_SRCDIR}/libaosl.so"
++            <SOURCE_DIR>/thirdparty/agora/linux/libaosl.so
++        COMMAND ${CMAKE_COMMAND} -E copy_if_different
++            "${RPM_AGORA_SRCDIR}/version.txt"
++            <SOURCE_DIR>/thirdparty/agora/linux/version.txt
++        COMMAND patchelf --set-soname libagora_rtm_sdk.so
++            <SOURCE_DIR>/thirdparty/agora/linux/libagora_rtm_sdk.so
++    )
++else()
++    # No staged SDK: keep the libraries bundled with elegoo-link (x86_64).
++    set(_elegoolink_rpm_agora_cmds
++        COMMAND ${CMAKE_COMMAND} -E echo "Agora RTM SDK: using bundled thirdparty/agora/linux libraries"
++    )
++endif()
++
+ orcaslicer_add_cmake_project(elegoolink
+ 
+     GIT_REPOSITORY      ${ELEGOOLINK_GIT_REPOSITORY}
+@@ -44,6 +82,7 @@
+         ${CMAKE_COMMAND} -E echo "Patching event_system.h for GCC 16..."
+         COMMAND sed -i "/#include <mutex>/a #include <algorithm>"
+             <SOURCE_DIR>/include/events/event_system.h
++        ${_elegoolink_rpm_agora_cmds}
+ 
+     
+     DEPENDS 

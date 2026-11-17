@@ -10,6 +10,8 @@
 #   0001 — deps/CMakeLists.txt: виявлення системних OpenSSL та CURL (поза FLATPAK)
 #   0002 — elegoolink/elegoolink.cmake: системний CURL (${CURL_PKG}) +
 #         PATCH_COMMAND додає #include <algorithm> для GCC 16
+#   0003 — elegoolink/elegoolink.cmake: на aarch64 підміняє бандліновані
+#         x86_64 бібліотеки Agora RTM SDK на aarch64 (див. %prep)
 #
 
 Name:           elegoo-slicer
@@ -26,6 +28,9 @@ Patch1:         0001-deps-system-openssl-curl.patch
 # Патч 2: elegoolink/elegoolink.cmake — системний CURL + #include <algorithm>
 #         для elegoo-link (GCC 16), застосовується під час deps build
 Patch2:         0002-elegoolink-system-curl-algorithm.patch
+# Патч 3: elegoolink/elegoolink.cmake — лише aarch64: підміна Agora RTM SDK
+#         (бандл містить лише x86_64 .so); нічого не робить без staged SDK
+Patch3:         0003-aarch64-agora.patch
 
 # Тестування та debug-пакунок не збираємо; бінарник не стрипуємо
 %global debug_package %{nil}
@@ -51,6 +56,12 @@ BuildRequires:  perl-FindBin
 BuildRequires:  perl-IPC-Cmd
 BuildRequires:  python3
 BuildRequires:  wget
+
+# ── aarch64: завантаження та підготовка Agora RTM SDK (див. %prep) ──────────
+%ifarch aarch64
+BuildRequires:  unzip
+BuildRequires:  patchelf
+%endif
 
 # ── Системні devel-пакети (сумісні версії) ──────────────────────────────────
 # eigen3 5.0.1 = точне співпадіння
@@ -157,6 +168,47 @@ sed -i "s/+_UNKNOWN/_$(date '+%%F')/" version.inc
 %patch -P2 -p1
 # Патч 2 містить PATCH_COMMAND, який виправляє event_system.h у cloned
 # elegoo-link під час deps/build (додає <algorithm> для GCC 16).
+# Патч 3 додає до того самого PATCH_COMMAND підміну Agora RTM SDK — вона
+# спрацьовує лише коли існує каталог, підготовлений нижче (тільки aarch64).
+%patch -P3 -p1
+
+# ── aarch64: Agora RTM SDK 2.3.0 ────────────────────────────────────────────
+# thirdparty/agora/linux у elegoo-link містить лише x86_64 .so, а вимкнути
+# клауд-функції (ENABLE_CLOUD_FEATURES) не можна — код слайсера використовує
+# їх безумовно. Офіційного C++ SDK для Linux aarch64 не існує, тому беремо:
+#   * нативні бібліотеки з aarch64-збірки Java SDK Agora RTM 2.3.0
+#     (Maven Central) — вона збирається з того самого C++ ядра і експортує
+#     ті самі три символи (createAgoraRtmClient, getErrorReason, getVersion);
+#   * заголовки C++ SDK 2.3.0 — їх ОБОВ'ЯЗКОВО міняємо разом із .so:
+#     2.2.8 і 2.3.0 несумісні за ABI (RtmConfig отримав поле, а
+#     IRtmEventHandler втратив віртуальний метод).
+# SHA256 підписані; на x86_64 цей блок не виконується.
+%ifarch aarch64
+AGORA_DIR=%{_builddir}/agora-aarch64
+rm -rf "$AGORA_DIR" %{_builddir}/agora-aarch64.jar %{_builddir}/agora-cpp-sdk.zip
+mkdir -p "$AGORA_DIR/include"
+
+echo "=== Agora RTM SDK 2.3.0 for aarch64 ==="
+wget -q "https://repo1.maven.org/maven2/io/agora/rtm-java-aarch64/2.3.0/rtm-java-aarch64-2.3.0.jar" \
+    -O %{_builddir}/agora-aarch64.jar || exit 1
+echo "b02805a5e157206bc03048779cf85ed4924264a0f6d2383a64dcaad653905ee4  %{_builddir}/agora-aarch64.jar" \
+    | sha256sum -c - || exit 1
+unzip -o -j -q %{_builddir}/agora-aarch64.jar \
+    native/libagora-rtm-sdk.so native/libaosl.so -d "$AGORA_DIR" || exit 1
+mv "$AGORA_DIR/libagora-rtm-sdk.so" "$AGORA_DIR/libagora_rtm_sdk.so"
+
+wget -q "https://download.agora.io/rtm2/release/Agora_RTM_C%%2B%%2B_SDK_for_Linux_v2.3.0.zip" \
+    -O %{_builddir}/agora-cpp-sdk.zip || exit 1
+echo "2fcbc0305c945cc5126ee2843065678f1f7aa9b9816dbc3d152c13d7dc267c17  %{_builddir}/agora-cpp-sdk.zip" \
+    | sha256sum -c - || exit 1
+unzip -o -j -q %{_builddir}/agora-cpp-sdk.zip \
+    'Agora_Native_SDK_for_Linux_MINI_RTM/rtm/sdk/high_level_api/include/*' \
+    -d "$AGORA_DIR/include" || exit 1
+
+echo "2.3.0" > "$AGORA_DIR/version.txt"
+rm -f %{_builddir}/agora-aarch64.jar %{_builddir}/agora-cpp-sdk.zip
+ls -l "$AGORA_DIR" "$AGORA_DIR/include"
+%endif
 
 # ────────────────────────────────────────────────────────────────────────────
 %build
@@ -173,11 +225,21 @@ export CMAKE_POLICY_VERSION_MINIMUM=3.5
 # Системні: OpenSSL 3.5.7, libcurl 8.18.0, expat 2.8.1, zlib-ng, libpng, JPEG.
 
 mkdir -p deps/build
+
+# aarch64: каталог з Agora RTM SDK, підготовлений у %prep. Патч 0003 бачить
+# цю змінну і підміняє x86_64-бібліотеки elegoo-link перед його збіркою;
+# на x86_64 змінна порожня і патч нічого не робить.
+AGORA_CMAKE_ARGS=""
+%ifarch aarch64
+AGORA_CMAKE_ARGS="-DRPM_AGORA_SRCDIR=%{_builddir}/agora-aarch64"
+%endif
+
 cmake -S deps -B deps/build \
     -G Ninja \
     -DCMAKE_BUILD_TYPE=Release \
     -DCMAKE_POLICY_VERSION_MINIMUM=3.5 \
     -DDEP_WX_GTK3=ON \
+    $AGORA_CMAKE_ARGS \
     -DDESTDIR="%{_builddir}/ElegooSlicer-%{version}/deps/build/ElegooSlicer_dep"
 
 cmake --build deps/build
@@ -280,7 +342,15 @@ cp -R %{buildroot}/opt/ElegooSlicer/resources/web/elegoolink/. \
 
 # ────────────────────────────────────────────────────────────────────────────
 %changelog
-* Sat Aug 08 2026 ElegooSlicer RPM Packager <rpm@elegoo.com> - @VERSION@-@RELEASE@
+* Tue Nov 17 2026 ElegooSlicer RPM Packager <rpm@elegoo.com> - @VERSION@-@RELEASE@
+- Додано підтримку aarch64: клауд-функції (Agora RTM SDK) не можна вимкнути,
+  а бандл elegoo-link містить лише x86_64 .so. Патч 0003 на aarch64
+  підміняє їх aarch64-збіркою SDK 2.3.0 (Maven Central, io.agora) разом
+  із заголовками C++ SDK 2.3.0, а libagora_rtm_sdk.so отримує SONAME
+  через patchelf (інакше в бінарник потрапив би абсолютний build-шлях)
+- Патч 0003 застосовується і на x86_64, але без staged SDK нічого не робить
+- Release 5 → 6
+* Sat Aug 08 2026 ElegooSlicer RPM Packager <rpm@elegoo.com> - @VERSION@-5
 - Виправлено веб UI plugin'а elegoolink: файли копіюються в
   resources/plugins/elegoolink/web (очікуваний static_web_server шлях), а не
   лише у resources/web/elegoolink (виправлено "index.html: No such file")
