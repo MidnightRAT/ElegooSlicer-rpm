@@ -72,6 +72,8 @@ sudo dnf install -y rpm-build rpmdevtools git git-lfs wget curl unzip \
   desktop-file-utils \
   tbb-devel blosc-devel NLopt-devel opencv-devel \
   zlib-ng-compat-devel expat-devel openexr-devel
+# NOTE: on aarch64 drop `libquadmath-devel` — Fedora 45 aarch64 does not ship it
+# (and the build does not link against libquadmath).
 
 # Determine version and build RPM
 VERSION=$(curl -sL https://api.github.com/repos/ELEGOO-3D/ElegooSlicer/releases/latest | grep tag_name | cut -d '"' -f 4 | sed 's/^v//')

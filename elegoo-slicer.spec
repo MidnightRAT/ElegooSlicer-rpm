@@ -124,7 +124,11 @@ BuildRequires:  gstreamer1-plugins-good
 BuildRequires:  gstreamermm-devel
 BuildRequires:  libspnav-devel
 BuildRequires:  libmspack-devel
+# libquadmath-devel не існує в Fedora 45 aarch64 (GCC aarch64 не збирає
+# libquadmath); у джерелах нічого не посилається на -lquadmath.
+%ifnarch aarch64
 BuildRequires:  libquadmath-devel
+%endif
 BuildRequires:  desktop-file-utils
 
 # ────────────────────────────────────────────────────────────────────────────
