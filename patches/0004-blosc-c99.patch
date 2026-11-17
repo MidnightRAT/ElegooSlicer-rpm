@@ -1,0 +1,37 @@
+From: MidnightRAT <midnight@example.invalid>
+Subject: [PATCH] deps: build Blosc as C99 explicitly
+
+Blosc's CMakeLists.txt only appends -std=gnu99 for i386/i686/x86_64/amd64.
+On aarch64 no -std flag is passed, so GCC 16 falls back to its default
+(gnu23), where "bool" is a keyword and blosc/shuffle.c:25
+"typedef _Bool bool;" becomes a hard error.
+
+Force the C standard through CMake's own mechanism instead of touching the
+architecture list: CMAKE_C_STANDARD=99 + CMAKE_C_EXTENSIONS=ON makes CMake
+pass -std=gnu99 on every architecture.  On x86_64 this is a redundant
+duplicate of the flag Blosc already adds, so behavior there is unchanged.
+
+---
+ deps/Blosc/Blosc.cmake | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+--- a/deps/Blosc/Blosc.cmake
++++ b/deps/Blosc/Blosc.cmake
+@@ -24,6 +24,8 @@
+             -DPREFER_EXTERNAL_ZLIB=ON
+             -DDEACTIVATE_SSE2=ON
+             -DDEACTIVATE_AVX2=ON
++            -DCMAKE_C_STANDARD=99
++            -DCMAKE_C_EXTENSIONS=ON
+     )
+ else()
+     orcaslicer_add_cmake_project(Blosc
+@@ -41,6 +43,8 @@
+             -DBUILD_TESTS=OFF 
+             -DBUILD_BENCHMARKS=OFF 
+             -DPREFER_EXTERNAL_ZLIB=ON
++            -DCMAKE_C_STANDARD=99
++            -DCMAKE_C_EXTENSIONS=ON
+     )
+ endif()
+ if (MSVC)

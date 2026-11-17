@@ -31,6 +31,9 @@ Patch2:         0002-elegoolink-system-curl-algorithm.patch
 # Патч 3: elegoolink/elegoolink.cmake — лише aarch64: підміна Agora RTM SDK
 #         (бандл містить лише x86_64 .so); нічого не робить без staged SDK
 Patch3:         0003-aarch64-agora.patch
+# Патч 4: deps/Blosc/Blosc.cmake — явно C99 (CMAKE_C_STANDARD=99); на aarch64
+#         blosc не додає -std=gnu99 і GCC 16 ламається об typedef _Bool bool
+Patch4:         0004-blosc-c99.patch
 
 # Тестування та debug-пакунок не збираємо; бінарник не стрипуємо
 %global debug_package %{nil}
@@ -175,6 +178,9 @@ sed -i "s/+_UNKNOWN/_$(date '+%%F')/" version.inc
 # Патч 3 додає до того самого PATCH_COMMAND підміну Agora RTM SDK — вона
 # спрацьовує лише коли існує каталог, підготовлений нижче (тільки aarch64).
 %patch -P3 -p1
+# Патч 4: Blosc не додає -std=gnu99 поза x86 — на aarch64 збірка падає у
+# blosc/shuffle.c (typedef _Bool bool) через gnu23-заставку GCC 16.
+%patch -P4 -p1
 
 # ── aarch64: Agora RTM SDK 2.3.0 ────────────────────────────────────────────
 # thirdparty/agora/linux у elegoo-link містить лише x86_64 .so, а вимкнути
@@ -353,7 +359,10 @@ cp -R %{buildroot}/opt/ElegooSlicer/resources/web/elegoolink/. \
   із заголовками C++ SDK 2.3.0, а libagora_rtm_sdk.so отримує SONAME
   через patchelf (інакше в бінарник потрапив би абсолютний build-шлях)
 - Патч 0003 застосовується і на x86_64, але без staged SDK нічого не робить
-- Release 5 → 6
+- Патч 0004: deps/Blosc — явно C99 (`CMAKE_C_STANDARD=99`), бо upstream
+  додає `-std=gnu99` лише для i386/x86_64, а на aarch64 GCC 16 з
+  gnu23-заставкою падає на `typedef _Bool bool` у blosc/shuffle.c
+- Release 5 → 7
 * Sat Aug 08 2026 ElegooSlicer RPM Packager <rpm@elegoo.com> - @VERSION@-5
 - Виправлено веб UI plugin'а elegoolink: файли копіюються в
   resources/plugins/elegoolink/web (очікуваний static_web_server шлях), а не

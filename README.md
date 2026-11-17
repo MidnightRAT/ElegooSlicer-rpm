@@ -29,6 +29,14 @@ A third patch is arch-specific:
   `elegoo-link` is configured; on `x86_64` it does nothing. See
   [aarch64 support](#aarch64-support).
 
+And one fixes a GCC 16 / arch bug:
+
+- `patches/0004-blosc-c99.patch` — forces `CMAKE_C_STANDARD=99` for the bundled
+  Blosc. Blosc only adds `-std=gnu99` on i386/x86_64, so on `aarch64` it fell
+  back to GCC 16's `gnu23` default where `bool` is a keyword
+  (`blosc/shuffle.c: typedef _Bool bool;`). On `x86_64` the flag is a
+  duplicate of the one Blosc already passes, so nothing changes there.
+
 ## Installation
 
 ### From COPR (Fedora, Recommended)
@@ -82,7 +90,7 @@ wget -q "https://github.com/elegoo-repo/ElegooSlicer/archive/refs/tags/v${VERSIO
   -O ~/rpmbuild/SOURCES/ElegooSlicer-${VERSION}.tar.gz
 cp README.md ~/rpmbuild/SOURCES/
 cp patches/0*.patch ~/rpmbuild/SOURCES/
-sed -e "s/@VERSION@/${VERSION}/g" -e "s/@RELEASE@/6/g" \
+sed -e "s/@VERSION@/${VERSION}/g" -e "s/@RELEASE@/7/g" \
   elegoo-slicer.spec > ~/rpmbuild/SPECS/elegoo-slicer.spec
 rpmbuild -ba ~/rpmbuild/SPECS/elegoo-slicer.spec
 ```
@@ -135,6 +143,14 @@ compatible (`RtmConfig` gained a member, `IRtmEventHandler` lost a virtual).
 aarch64 RPMs are produced by COPR only (GitHub Actions runs on x86_64
 runners).
 
+Two further aarch64 adjustments live in the spec and in `patches/0004`:
+
+- `libquadmath-devel` is build-required **only** on `x86_64`
+  (`%ifnarch aarch64`): Fedora 45 aarch64 does not ship the package and
+  nothing in the build links against `-lquadmath`.
+- patch `0004-blosc-c99.patch` (see above) — Blosc's `-std=gnu99` is added
+  only for x86 processors in its `CMakeLists.txt`.
+
 ## Project Structure
 
 ```
@@ -145,7 +161,8 @@ ElegooSlicer-rpm/
 ├── patches/
 │   ├── 0001-deps-system-openssl-curl.patch
 │   ├── 0002-elegoolink-system-curl-algorithm.patch
-│   └── 0003-aarch64-agora.patch
+│   ├── 0003-aarch64-agora.patch
+│   └── 0004-blosc-c99.patch
 └── README.md
 ```
 
